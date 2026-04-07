@@ -1,145 +1,143 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\PlannerProj\\back\\ProductionApi\\",
+  "WorkspaceRootPath": "D:\\PlannerProj\\planner\\back\\ProductionApi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\detail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\detail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\detailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\detailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\detailtodetailreconfigurationtimecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\detailtodetailreconfigurationtimecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\data\\productiondbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\data\\productiondbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\workplace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\workplace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\shiftworklogsetupperson.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\shiftworklogsetupperson.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\shiftworklogequipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\shiftworklogequipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\shiftworklog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\shiftworklog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\person.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\person.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\person.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\operation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\operation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\materialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\materialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\materialmaterialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\materialmaterialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\material.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\material.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\models\\detailtodetailreconfigurationtime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\detailtodetailreconfigurationtime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\migrations\\productiondbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\migrations\\productiondbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\migrations\\20260104192045_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\migrations\\20260104192045_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\workplacescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\workplacescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\shiftworklogsetuppersoncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\shiftworklogsetuppersoncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\shiftworklogequipmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\shiftworklogequipmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\shiftworklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\shiftworklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\peoplecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\peoplecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\peoplecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\operationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\operationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\materialsizescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\materialsizescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\materialsizescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\materialscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\materialscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\materialmaterialsizescontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\materialmaterialsizescontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\materialmaterialsizescontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\controllers\\equipmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\detail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\detail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\detailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\detailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\detailtodetailreconfigurationtimecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\detailtodetailreconfigurationtimecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\data\\productiondbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\data\\productiondbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\workplace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\workplace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\shiftworklogsetupperson.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\shiftworklogsetupperson.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\shiftworklogequipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\shiftworklogequipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\shiftworklog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\shiftworklog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\operation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\operation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\materialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\materialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\materialmaterialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\materialmaterialsize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\material.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\material.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\equipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\models\\detailtodetailreconfigurationtime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\models\\detailtodetailreconfigurationtime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\migrations\\productiondbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\migrations\\productiondbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\migrations\\20260104192045_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\migrations\\20260104192045_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\workplacescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\workplacescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\shiftworklogsetuppersoncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\shiftworklogsetuppersoncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\shiftworklogequipmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\shiftworklogequipmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\shiftworklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\shiftworklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\operationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\operationscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\materialscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\materialscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\equipmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\equipmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191941_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProductionApi\\Migrations\\20260104191941_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191941_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191813_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProductionApi\\Migrations\\20260104191813_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191813_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\productionapi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\productionapi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\productionapi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\productionapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\productionapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\productionapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\back\\productionapi\\productionapi\\productionapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\productionapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\productionapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
@@ -150,40 +148,114 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Detail.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Detail.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Models\\Detail.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Detail.cs",
-              "RelativeToolTip": "ProductionApi\\Models\\Detail.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBUAAAAUAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\appsettings.json",
+              "RelativeDocumentMoniker": "ProductionApi\\appsettings.json",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\appsettings.json",
+              "RelativeToolTip": "ProductionApi\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-04T17:39:15.266Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DetailController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailController.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\DetailController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailController.cs",
+              "RelativeToolTip": "ProductionApi\\Controllers\\DetailController.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAuwBsAAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T18:05:11.505Z",
+              "WhenOpened": "2026-01-04T18:13:21.457Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MaterialMaterialSizesController .cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
+              "RelativeToolTip": "ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-04T18:24:27.557Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MaterialSizesController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialSizesController.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\MaterialSizesController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialSizesController.cs",
+              "RelativeToolTip": "ProductionApi\\Controllers\\MaterialSizesController.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAAgwFwAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-04T18:14:53.975Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Program.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Program.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Program.cs",
-              "RelativeToolTip": "ProductionApi\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAxAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Person.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Person.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Models\\Person.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Person.cs",
+              "RelativeToolTip": "ProductionApi\\Models\\Person.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAA/wBcAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T17:37:57.53Z"
+              "WhenOpened": "2026-01-04T18:03:54.619Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 1,
+              "Title": "PeopleController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\PeopleController.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\PeopleController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\PeopleController.cs",
+              "RelativeToolTip": "ProductionApi\\Controllers\\PeopleController.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAGUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-04T18:11:41.505Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DetailToDetailReconfigurationTimeController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
+              "RelativeToolTip": "ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAACwAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-04T18:14:02.452Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Detail.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Detail.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Models\\Detail.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Detail.cs",
+              "RelativeToolTip": "ProductionApi\\Models\\Detail.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-04T18:05:11.505Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "ShiftWorkLogEquipment.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogEquipment.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogEquipment.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\ShiftWorkLogEquipment.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogEquipment.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogEquipment.cs",
               "RelativeToolTip": "ProductionApi\\Models\\ShiftWorkLogEquipment.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -191,50 +263,23 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DetailToDetailReconfigurationTimeController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
-              "RelativeToolTip": "ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAACwAAAAjAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Program.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
+              "RelativeToolTip": "ProductionApi\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T18:14:02.452Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-04T17:37:57.53Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\appsettings.json",
-              "RelativeDocumentMoniker": "ProductionApi\\appsettings.json",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\appsettings.json",
-              "RelativeToolTip": "ProductionApi\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-04T17:39:15.266Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DetailController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailController.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\DetailController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailController.cs",
-              "RelativeToolTip": "ProductionApi\\Controllers\\DetailController.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAuwBsAAABEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T18:13:21.457Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "ProductionDbContext.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Data\\ProductionDbContext.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Data\\ProductionDbContext.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Data\\ProductionDbContext.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Data\\ProductionDbContext.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Data\\ProductionDbContext.cs",
               "RelativeToolTip": "ProductionApi\\Data\\ProductionDbContext.cs",
               "ViewState": "AgIAAHUAAAAAAAAAAAAowJ8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -242,11 +287,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "WorkPlace.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\WorkPlace.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\WorkPlace.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\WorkPlace.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\WorkPlace.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\WorkPlace.cs",
               "RelativeToolTip": "ProductionApi\\Models\\WorkPlace.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -254,11 +299,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 11,
               "Title": "ShiftWorkLogSetupPerson.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogSetupPerson.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogSetupPerson.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\ShiftWorkLogSetupPerson.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogSetupPerson.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLogSetupPerson.cs",
               "RelativeToolTip": "ProductionApi\\Models\\ShiftWorkLogSetupPerson.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -266,11 +311,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "ShiftWorkLog.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLog.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLog.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\ShiftWorkLog.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLog.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\ShiftWorkLog.cs",
               "RelativeToolTip": "ProductionApi\\Models\\ShiftWorkLog.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAAxwCMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -278,23 +323,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Person.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Person.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Models\\Person.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Person.cs",
-              "RelativeToolTip": "ProductionApi\\Models\\Person.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAAwCAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T18:03:54.619Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "Operation.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Operation.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Operation.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\Operation.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Operation.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Operation.cs",
               "RelativeToolTip": "ProductionApi\\Models\\Operation.cs",
               "ViewState": "AgIAABcAAAAAAAAAAAAAACkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -302,11 +335,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "MaterialSize.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\MaterialSize.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\MaterialSize.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\MaterialSize.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\MaterialSize.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\MaterialSize.cs",
               "RelativeToolTip": "ProductionApi\\Models\\MaterialSize.cs",
               "ViewState": "AgIAAAQAAAAAAAAAAAAAwBcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -314,11 +347,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 16,
               "Title": "MaterialMaterialSize.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\MaterialMaterialSize.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\MaterialMaterialSize.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\MaterialMaterialSize.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\MaterialMaterialSize.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\MaterialMaterialSize.cs",
               "RelativeToolTip": "ProductionApi\\Models\\MaterialMaterialSize.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -326,11 +359,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 17,
               "Title": "Material.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Material.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Material.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\Material.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Material.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Material.cs",
               "RelativeToolTip": "ProductionApi\\Models\\Material.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -338,11 +371,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 18,
               "Title": "Equipment.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Equipment.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Equipment.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\Equipment.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\Equipment.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Equipment.cs",
               "RelativeToolTip": "ProductionApi\\Models\\Equipment.cs",
               "ViewState": "AgIAABQAAAAAAAAAAAAAwCcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -350,11 +383,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 19,
               "Title": "DetailToDetailReconfigurationTime.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\DetailToDetailReconfigurationTime.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\DetailToDetailReconfigurationTime.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\DetailToDetailReconfigurationTime.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Models\\DetailToDetailReconfigurationTime.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\DetailToDetailReconfigurationTime.cs",
               "RelativeToolTip": "ProductionApi\\Models\\DetailToDetailReconfigurationTime.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -362,11 +395,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "ProductionDbContextModelSnapshot.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\ProductionDbContextModelSnapshot.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Migrations\\ProductionDbContextModelSnapshot.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Migrations\\ProductionDbContextModelSnapshot.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\ProductionDbContextModelSnapshot.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Migrations\\ProductionDbContextModelSnapshot.cs",
               "RelativeToolTip": "ProductionApi\\Migrations\\ProductionDbContextModelSnapshot.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -374,11 +407,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 22,
               "Title": "WorkPlacesController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\WorkPlacesController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\WorkPlacesController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\WorkPlacesController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\WorkPlacesController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\WorkPlacesController.cs",
               "RelativeToolTip": "ProductionApi\\Controllers\\WorkPlacesController.cs",
               "ViewState": "AgIAAFMAAAAAAAAAAAAgwGkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -386,11 +419,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 23,
               "Title": "ShiftWorkLogSetupPersonController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogSetupPersonController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogSetupPersonController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\ShiftWorkLogSetupPersonController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogSetupPersonController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogSetupPersonController.cs",
               "RelativeToolTip": "ProductionApi\\Controllers\\ShiftWorkLogSetupPersonController.cs",
               "ViewState": "AgIAADkAAAAAAAAAAAAgwE8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -398,11 +431,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 24,
               "Title": "ShiftWorkLogEquipmentController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogEquipmentController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogEquipmentController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\ShiftWorkLogEquipmentController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogEquipmentController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogEquipmentController.cs",
               "RelativeToolTip": "ProductionApi\\Controllers\\ShiftWorkLogEquipmentController.cs",
               "ViewState": "AgIAADkAAAAAAAAAAAAgwE8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -410,11 +443,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 21,
               "Title": "20260104192045_InitialCreate.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104192045_InitialCreate.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104192045_InitialCreate.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Migrations\\20260104192045_InitialCreate.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104192045_InitialCreate.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104192045_InitialCreate.cs",
               "RelativeToolTip": "ProductionApi\\Migrations\\20260104192045_InitialCreate.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -422,11 +455,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 25,
               "Title": "ShiftWorkLogController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\ShiftWorkLogController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogController.cs",
               "RelativeToolTip": "ProductionApi\\Controllers\\ShiftWorkLogController.cs",
               "ViewState": "AgIAAIcAAAAAAAAAAAAgwJ0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -434,23 +467,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "PeopleController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\PeopleController.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\PeopleController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\PeopleController.cs",
-              "RelativeToolTip": "ProductionApi\\Controllers\\PeopleController.cs",
-              "ViewState": "AgIAAE8AAAAAAAAAAAAgwGUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T18:11:41.505Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 26,
               "Title": "OperationsController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\OperationsController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\OperationsController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\OperationsController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\OperationsController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\OperationsController.cs",
               "RelativeToolTip": "ProductionApi\\Controllers\\OperationsController.cs",
               "ViewState": "AgIAAFUAAAAAAAAAAAAgwGsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -458,23 +479,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "MaterialSizesController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialSizesController.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\MaterialSizesController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialSizesController.cs",
-              "RelativeToolTip": "ProductionApi\\Controllers\\MaterialSizesController.cs",
-              "ViewState": "AgIAAFUAAAAAAAAAAAAgwGsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T18:14:53.975Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "MaterialsController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialsController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialsController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\MaterialsController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialsController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialsController.cs",
               "RelativeToolTip": "ProductionApi\\Controllers\\MaterialsController.cs",
               "ViewState": "AgIAAFUAAAAAAAAAAAAgwGsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -482,23 +491,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "MaterialMaterialSizesController .cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
-              "RelativeToolTip": "ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
-              "ViewState": "AgIAADsAAAAAAAAAAAAgwFEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T18:24:27.557Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 28,
               "Title": "EquipmentController.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\EquipmentController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\EquipmentController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\EquipmentController.cs",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Controllers\\EquipmentController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\EquipmentController.cs",
               "RelativeToolTip": "ProductionApi\\Controllers\\EquipmentController.cs",
               "ViewState": "AgIAAG4AAAAAAAAAAAAgwIQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -509,9 +506,9 @@
               "DocumentIndex": 29,
               "Title": "20260104191941_InitialCreate.cs",
               "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191941_InitialCreate.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Migrations\\20260104191941_InitialCreate.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191941_InitialCreate.cs",
               "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191941_InitialCreate.cs",
-              "RelativeToolTip": "ProductionApi\\Migrations\\20260104191941_InitialCreate.cs",
+              "RelativeToolTip": "..\\..\\..\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191941_InitialCreate.cs",
               "ViewState": "AgIAAMQAAAAAAAAAAAAowG8BAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-04T19:19:41.16Z"
@@ -521,9 +518,9 @@
               "DocumentIndex": 30,
               "Title": "20260104191813_InitialCreate.cs",
               "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191813_InitialCreate.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Migrations\\20260104191813_InitialCreate.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191813_InitialCreate.cs",
               "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191813_InitialCreate.cs",
-              "RelativeToolTip": "ProductionApi\\Migrations\\20260104191813_InitialCreate.cs",
+              "RelativeToolTip": "..\\..\\..\\back\\ProductionApi\\ProductionApi\\Migrations\\20260104191813_InitialCreate.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-04T19:18:13.888Z"
@@ -532,9 +529,9 @@
               "$type": "Document",
               "DocumentIndex": 31,
               "Title": "launchSettings.json",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Properties\\launchSettings.json",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "ProductionApi\\Properties\\launchSettings.json",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Properties\\launchSettings.json",
               "RelativeToolTip": "ProductionApi\\Properties\\launchSettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
@@ -544,9 +541,9 @@
               "$type": "Document",
               "DocumentIndex": 32,
               "Title": "ProductionApi",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
               "RelativeDocumentMoniker": "ProductionApi\\ProductionApi.csproj",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
               "RelativeToolTip": "ProductionApi\\ProductionApi.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2026-01-04T19:12:30.928Z"
@@ -555,9 +552,9 @@
               "$type": "Document",
               "DocumentIndex": 33,
               "Title": "ProductionApi.http",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\ProductionApi.http",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\ProductionApi.http",
               "RelativeDocumentMoniker": "ProductionApi\\ProductionApi.http",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\ProductionApi.http",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\ProductionApi.http",
               "RelativeToolTip": "ProductionApi\\ProductionApi.http",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
@@ -567,9 +564,9 @@
               "$type": "Document",
               "DocumentIndex": 34,
               "Title": "ProductionApi.csproj",
-              "DocumentMoniker": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
               "RelativeDocumentMoniker": "ProductionApi\\ProductionApi.csproj",
-              "ToolTip": "D:\\PlannerProj\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\ProductionApi.csproj",
               "RelativeToolTip": "ProductionApi\\ProductionApi.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",

@@ -50,7 +50,7 @@ namespace ProductionApi.Data
         public DbSet<ShiftWorkLogEquipment> ShiftWorkLogEquipments { get; set; }
 
         // 13. TimeSheet
-        public DbSet<TimeSheet> TimeSheets { get; set; }
+        public DbSet<TimeSheet> TimeSheet { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

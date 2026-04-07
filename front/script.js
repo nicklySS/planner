@@ -62,6 +62,12 @@ function initializeApp() {
     // Период статистики
     $('#stats-period').on('change', () => loadDashboardStats());
     
+    // Табель - фильтры
+    $('#timesheet-month').on('change', () => loadTimeSheet());
+    $('#timesheet-shift-filter').on('change', () => loadTimeSheet());
+    $('#refresh-timesheet').click(() => loadTimeSheet());
+    $('#create-timesheet-btn').click(() => showCreateTimesheetModal());
+    
     // Загрузка данных при переключении табов
     $(document).on('tabSwitched', function(event, tabId) {
         switch(tabId) {
@@ -86,6 +92,13 @@ function initializeApp() {
                 break;
             case 'people':
                 loadPeople();
+                break;
+            case 'timesheet':
+                // Установить текущий месяц по умолчанию
+                const today = new Date();
+                const monthStr = String(today.getMonth() + 1).padStart(2, '0');
+                $('#timesheet-month').val(`${today.getFullYear()}-${monthStr}`);
+                loadTimeSheet();
                 break;
         }
     });
@@ -124,6 +137,9 @@ function initializeExportButtons() {
     // Сотрудники
     $('#export-people-excel').click(() => exportToExcel('people', 'Сотрудники'));
     $('#export-people-word').click(() => exportToWord('people', 'Сотрудники'));
+    
+    // Табель
+    $('#export-timesheet-excel').click(() => exportTimeSheetToExcel());
 }
 
 // Экспорт в Excel
@@ -2097,7 +2113,7 @@ async function loadPeople() {
     } catch (error) {
         $('#people-table-body').html(`
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="7" class="empty-state">
                     <i class="fas fa-exclamation-circle"></i>
                     <p>Не удалось загрузить данные</p>
                                 </td>
@@ -2113,7 +2129,7 @@ function renderPeopleTable(people) {
     if (!people || people.length === 0) {
         tbody.html(`
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="7" class="empty-state">
                     <i class="fas fa-users"></i>
                     <p>Нет данных о сотрудниках</p>
                 </td>
@@ -2141,6 +2157,7 @@ function renderPeopleTable(people) {
     const rows = filteredPeople.map(person => `
         <tr>
             <td>${person.personID}</td>
+            <td><strong>${person.employeeNumber || '-'}</strong></td>
             <td><strong>${person.fullName}</strong></td>
             <td>
                 <span class="badge ${person.role === 'Мастер' ? 'badge-info' : 
@@ -2175,6 +2192,12 @@ function showPersonModal(person = null) {
     const content = `
         <form id="person-form">
             <input type="hidden" id="person-id" value="${person?.personID || ''}">
+            
+            <div class="form-group">
+                <label for="employee-number">Табельный номер *</label>
+                <input type="text" id="employee-number" class="form-control" 
+                       value="${person?.employeeNumber || ''}" required placeholder="Например: РЛ-001">
+            </div>
             
             <div class="form-group">
                 <label for="full-name">ФИО *</label>
@@ -2216,6 +2239,7 @@ function showPersonModal(person = null) {
         
         const personData = {
             personID: $('#person-id').val() || 0,
+            employeeNumber: $('#employee-number').val(),
             fullName: $('#full-name').val(),
             role: $('#role').val(),
             isActive: $('#is-active').is(':checked')
@@ -2301,3 +2325,548 @@ window.deleteMaterialSize = deleteMaterialSize;
 window.editPerson = editPerson;
 window.deletePerson = deletePerson;
 window.closeModal = closeModal;
+
+// ========================================
+// ТАБЕЛЬ РАБОЧЕГО ВРЕМЕНИ
+// ========================================
+
+// Загрузка табеля рабочего времени
+function loadTimeSheet() {
+    const monthInput = $('#timesheet-month').val();
+    const shiftFilter = $('#timesheet-shift-filter').val();
+    
+    if (!monthInput) {
+        $('#timesheet-empty').show();
+        $('#timesheet-wrapper').hide();
+        $('#timesheet-loading').hide();
+        return;
+    }
+    
+    $('#timesheet-loading').show();
+    $('#timesheet-wrapper').hide();
+    $('#timesheet-empty').hide();
+    
+    // Парсим месяц
+    const [year, month] = monthInput.split('-');
+    // Используем строки для сравнения дат, чтобы избежать проблем с часовыми поясами
+    const startDateStr = `${year}-${String(parseInt(month)).padStart(2, '0')}-01`;
+    const endDate = new Date(parseInt(year), parseInt(month), 0);
+    const endDateStr = `${year}-${String(parseInt(month)).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+    
+    // Создаём дату для вычисления дней в месяце (используется в buildTimesheetTable)
+    const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    
+    // Загружаем людей и все TimeSheet записи
+    Promise.all([
+        $.ajax({
+            url: `${API_BASE_URL}/people`,
+            type: 'GET',
+            dataType: 'json'
+        }),
+        $.ajax({
+            url: `${API_BASE_URL}/timesheet`,
+            type: 'GET',
+            dataType: 'json'
+        })
+    ]).then(function([people, timesheets]) {
+        cachedData.people = people || [];
+        
+        // Фильтруем TimeSheet по выбранному месяцу, сравнивая строки дат
+        let filteredTimesheets = (timesheets || []).filter(ts => {
+            // Парсим дату из строки (YYYY-MM-DD)
+            const tsDateStr = ts.workDate.substring(0, 10);
+            return tsDateStr >= startDateStr && tsDateStr <= endDateStr;
+        });
+        
+        // Фильтруем по смене если выбрана
+        if (shiftFilter) {
+            filteredTimesheets = filteredTimesheets.filter(ts => ts.shiftCode === shiftFilter);
+        }
+        
+        // Группируем по PersonID и ShiftCode
+        const grouped = {};
+        filteredTimesheets.forEach(ts => {
+            const key = `${ts.personID}_${ts.shiftCode}`;
+            if (!grouped[key]) {
+                grouped[key] = [];
+            }
+            grouped[key].push(ts);
+        });
+        
+        buildTimesheetTable(people, grouped, startDate);
+        
+        $('#timesheet-loading').hide();
+        $('#timesheet-wrapper').show();
+        $('#timesheet-empty').hide();
+    }).catch(function(error) {
+        console.error('Ошибка загрузки табеля:', error);
+        showNotification('Ошибка при загрузке табеля', 'error');
+        $('#timesheet-loading').hide();
+        $('#timesheet-empty').show();
+    });
+}
+
+// Построение таблицы табеля
+function buildTimesheetTable(people, groupedData, startDate) {
+    const monthName = startDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+    const daysInMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
+    
+    // Заголовчики дней месяца - две строки: дни и смены
+    let headerRow1 = '<th rowspan="2">Табельный №</th>';
+    headerRow1 += '<th rowspan="2">ФИО</th>';
+    headerRow1 += '<th rowspan="2">Должность</th>';
+    
+    let headerRow2 = '';
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        headerRow1 += `<th colspan="2" class="day-header-main">${day}</th>`;
+        headerRow2 += `<th class="day-header-shift">1я</th>`;
+        headerRow2 += `<th class="day-header-shift">2я</th>`;
+    }
+    
+    $('#timesheet-header').html(headerRow1);
+    
+    // Добавляем вторую строку заголовка
+    const headerTable = $('#timesheet-table thead');
+    headerTable.html(`
+        <tr>
+            ${headerRow1}
+        </tr>
+        <tr>
+            ${headerRow2}
+        </tr>
+    `);
+    
+    // Тело таблицы
+    let bodyHtml = '';
+    const shifts = ['1я', '2я'];
+    
+    people.forEach(person => {
+        let row = '<tr>';
+        row += `<td class="sticky-col">${person.employeeNumber}</td>`;
+        row += `<td class="sticky-col">${person.fullName}</td>`;
+        row += `<td class="sticky-col">${person.role}</td>`;
+        
+        // Дни месяца
+        for (let day = 1; day <= daysInMonth; day++) {
+            // Для каждого дня добавляем ячейки для обеих смен
+            shifts.forEach(shift => {
+                const key = `${person.personID}_${shift}`;
+                const timesheets = groupedData[key] || [];
+                
+                // Ищем запись для этого дня
+                // Парсим дату напрямую из строки, чтобы избежать проблем с часовыми поясами
+                const ts = timesheets.find(t => {
+                    const dateMatch = t.workDate.match(/(\d{4})-(\d{2})-(\d{2})/);
+                    if (!dateMatch) return false;
+                    const tsDay = parseInt(dateMatch[3]);
+                    return tsDay === day;
+                });
+                
+                let cellContent = ts ? formatTimesheetCell(ts) : '';
+                row += `<td class="timesheet-cell editable" data-personid="${person.personID}" data-shift="${shift}" data-day="${day}" data-tsid="${ts?.timeSheetID || ''}">${cellContent}</td>`;
+            });
+        }
+        
+        row += '</tr>';
+        bodyHtml += row;
+    });
+    
+    $('#timesheet-body').html(bodyHtml);
+    
+    // Добавляем обработчики для редактирования
+    attachTimesheetCellHandlers();
+}
+
+// Форматирование содержимого ячейки
+function formatTimesheetCell(timesheet) {
+    if (!timesheet) return '';
+    
+    const dayTypeAbbr = {
+        'Work': 'Р',
+        'DayOff': 'В',
+        'Holiday': 'П',
+        'Sick': 'Б'
+    };
+    
+    const abbr = dayTypeAbbr[timesheet.dayType] || '?';
+    const hours = timesheet.hoursWorked ? `:${timesheet.hoursWorked}` : '';
+    
+    return `${abbr}${hours}`;
+}
+
+// Обработчики редактирования ячеек
+function attachTimesheetCellHandlers() {
+    $('.timesheet-cell.editable').off('click').on('click', function(e) {
+        e.stopPropagation();
+        
+        if ($(this).find('input, select').length > 0) return; // Уже в режиме редактирования
+        
+        const $cell = $(this);
+        const personId = $cell.data('personid');
+        const shift = $cell.data('shift');
+        const day = $cell.data('day');
+        const tsId = $cell.data('tsid');
+        const currentContent = $cell.text();
+        
+        // Создаём форму редактирования
+        const $editor = $(`
+            <div class="timesheet-editor">
+                <div class="editor-form">
+                    <label>Тип дня:</label>
+                    <select class="day-type-select">
+                        <option value="">-- Нет --</option>
+                        <option value="Work">Рабочий (Р)</option>
+                        <option value="DayOff">Выходной (В)</option>
+                        <option value="Holiday">Праздник (П)</option>
+                        <option value="Sick">Больничный (Б)</option>
+                    </select>
+                    
+                    <label>Часов работы:</label>
+                    <input type="number" class="hours-input" min="0" max="24" step="0.5" placeholder="8">
+                    
+                    <div class="editor-buttons">
+                        <button class="btn-save">Сохранить</button>
+                        <button class="btn-cancel">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        `);
+        
+        // Парсим текущее значение
+        if (currentContent) {
+            const dayTypeMap = { 'Р': 'Work', 'В': 'DayOff', 'П': 'Holiday', 'Б': 'Sick' };
+            const typeChar = currentContent[0];
+            const dayType = dayTypeMap[typeChar];
+            const hours = currentContent.includes(':') ? currentContent.split(':')[1] : '';
+            
+            $editor.find('.day-type-select').val(dayType);
+            if (hours) $editor.find('.hours-input').val(hours);
+        }
+        
+        // Сохранение
+        $editor.find('.btn-save').click(function() {
+            const dayType = $editor.find('.day-type-select').val();
+            const hours = $editor.find('.hours-input').val();
+            
+            if (!dayType) {
+                deleteTimesheetEntry(personId, day, $cell);
+                return;
+            }
+            
+            const monthInput = $('#timesheet-month').val();
+            const [year, month] = monthInput.split('-');
+            // Строим дату в формате YYYY-MM-DD напрямую, чтобы избежать проблем с часовыми поясами
+            const workDateStr = `${year}-${String(parseInt(month)).padStart(2, '0')}-${String(parseInt(day)).padStart(2, '0')}`;
+            
+            const payload = {
+                personID: parseInt(personId),
+                workDate: workDateStr + 'T00:00:00Z',
+                shiftCode: shift,
+                hoursWorked: hours ? parseFloat(hours) : null,
+                dayType: dayType
+            };
+            
+            // Если обновляем существующую запись, добавляем ID
+            if (tsId) {
+                payload.timeSheetID = parseInt(tsId);
+            }
+            
+            const url = tsId 
+                ? `${API_BASE_URL}/timesheet/${tsId}` 
+                : `${API_BASE_URL}/timesheet`;
+            
+            const method = tsId ? 'PUT' : 'POST';
+            
+            $.ajax({
+                url: url,
+                type: method,
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function(result) {
+                    // Для POST получаем ID из результата, для PUT используем существующий ID
+                    let newTsId = tsId;
+                    
+                    if (method === 'POST' && result) {
+                        newTsId = result.timeSheetID || result.id || tsId;
+                    }
+                    
+                    $cell.data('tsid', newTsId);
+                    
+                    // Форматируем и показываем содержимое
+                    const displayPayload = {
+                        ...payload,
+                        timeSheetID: newTsId,
+                        workDate: workDateStr
+                    };
+                    
+                    // Очищаем редактор и показываем новое содержимое
+                    $cell.html('');
+                    $cell.text(formatTimesheetCell(displayPayload));
+                    attachTimesheetCellHandlers();
+                    showNotification('Запись сохранена', 'success');
+                },
+                error: function(error) {
+                    console.error('Ошибка при сохранении:', error);
+                    const errorMsg = error.responseJSON?.detail || 'Ошибка сохранения';
+                    showNotification(errorMsg, 'error');
+                    // Восстанавливаем содержимое ячейки
+                    $cell.html('');
+                    $cell.text(currentContent);
+                    attachTimesheetCellHandlers();
+                }
+            });
+        });
+        
+        // Отмена
+        $editor.find('.btn-cancel').click(function() {
+            $cell.html('');
+            $cell.text(currentContent);
+            attachTimesheetCellHandlers();
+        });
+        
+        $cell.html('');
+        $cell.append($editor);
+    });
+    
+    // Закрытие редактора при клике вне
+    $(document).off('click.timesheet').on('click.timesheet', function(e) {
+        if (!$(e.target).closest('.timesheet-editor, .timesheet-cell').length) {
+            $('.timesheet-cell').each(function() {
+                const $cell = $(this);
+                if ($cell.find('.timesheet-editor').length > 0) {
+                    const originalContent = $cell.data('original-content') || '';
+                    $cell.html(originalContent);
+                }
+            });
+        }
+    });
+}
+
+// Удаление записи TimeSheet
+function deleteTimesheetEntry(personId, day, $cell) {
+    const tsId = $cell.data('tsid');
+    if (!tsId) {
+        $cell.html('');
+        attachTimesheetCellHandlers();
+        return;
+    }
+    
+    $.ajax({
+        url: `${API_BASE_URL}/timesheet/${tsId}`,
+        type: 'DELETE',
+        success: function() {
+            $cell.html('');
+            $cell.data('tsid', '');
+            showNotification('Запись удалена', 'success');
+        },
+        error: function(error) {
+            showNotification('Ошибка удаления', 'error');
+            console.error(error);
+        }
+    });
+}
+
+// Функция экспорта табеля в Excel
+function exportTimeSheetToExcel() {
+    const table = document.getElementById('timesheet-table');
+    const monthInput = $('#timesheet-month').val();
+    const monthName = monthInput ? new Date(monthInput + '-01').toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }) : 'Табель';
+    
+    const ws = XLSX.utils.table_to_sheet(table);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, monthName);
+    XLSX.writeFile(wb, `tabель_${monthInput}.xlsx`);
+}
+
+// Показать модаль для создания табеля на месяц
+function showCreateTimesheetModal() {
+    const monthInput = $('#timesheet-month').val();
+    
+    if (!monthInput) {
+        showNotification('Выберите месяц', 'warning');
+        return;
+    }
+    
+    const [year, month] = monthInput.split('-');
+    const monthName = new Date(year, parseInt(month) - 1, 1).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+    
+    const modalHtml = `
+        <div class="modal-backdrop">
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h2>Создать табель на ${monthName}</h2>
+                    <button class="close-modal-btn" onclick="window.closeModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Это создаст записи табеля для всех дней месяца для всех сотрудников.</p>
+                    <p><strong>Месяц:</strong> ${monthName}</p>
+                    
+                    <div class="form-group">
+                        <label>Тип дня по умолчанию:</label>
+                        <select id="default-day-type-select" class="form-control">
+                            <option value="Work">Рабочий день (Р)</option>
+                            <option value="DayOff">Выходной (В)</option>
+                            <option value="Holiday">Праздник (П)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Часов работы (по умолчанию для рабочих дней):</label>
+                        <input type="number" id="default-hours-input" class="form-control" min="0" max="24" step="0.5" value="8">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Смены для создания:</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="shift-1a-checkbox" checked value="1я"> Смена 1я
+                            </label>
+                            <label>
+                                <input type="checkbox" id="shift-2a-checkbox" checked value="2я"> Смена 2я
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="window.closeModal()">Отмена</button>
+                    <button class="btn btn-primary" id="create-timesheet-confirm-btn">Создать табель</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    $('#modal-container').html(modalHtml);
+    
+    // Обработчик подтверждения
+    $('#create-timesheet-confirm-btn').click(function() {
+        createTimesheetForMonth(monthInput);
+    });
+}
+
+// Создать табель на месяц
+function createTimesheetForMonth(monthInput) {
+    if (!monthInput) return;
+    
+    const [year, month] = monthInput.split('-');
+    const startDate = new Date(year, parseInt(month) - 1, 1);
+    const endDate = new Date(year, parseInt(month), 0);
+    const daysInMonth = endDate.getDate();
+    
+    const defaultDayType = $('#default-day-type-select').val() || 'Work';
+    const defaultHours = parseFloat($('#default-hours-input').val()) || 8;
+    const shift1aChecked = $('#shift-1a-checkbox').is(':checked');
+    const shift2aChecked = $('#shift-2a-checkbox').is(':checked');
+    
+    const shifts = [];
+    if (shift1aChecked) shifts.push('1я');
+    if (shift2aChecked) shifts.push('2я');
+    
+    if (shifts.length === 0) {
+        showNotification('Выберите хотя бы одну смену', 'warning');
+        return;
+    }
+    
+    // Получаем список людей
+    $.ajax({
+        url: `${API_BASE_URL}/people`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(people) {
+            // Статус загрузки
+            $('#modal-container').html(`
+                <div class="modal-backdrop">
+                    <div class="modal-dialog">
+                        <div class="modal-body" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary-red);"></i>
+                            <p style="margin-top: 20px;">Создание табеля...</p>
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                            <p><span id="progress-text">0</span> / <span id="progress-total">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            `);
+            
+            // Создаём записи
+            const totalRecords = people.length * shifts.length * daysInMonth;
+            let createdCount = 0;
+            
+            const requests = [];
+            
+            people.forEach(person => {
+                shifts.forEach(shift => {
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        // Создаём UTC дату, чтобы избежать проблем с часовыми поясами
+                        const workDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, day));
+                        
+                        // Вычисляем тип дня (выходные по выходным: суббота и воскресенье)
+                        const dayOfWeek = workDate.getUTCDay();
+                        let dayType = defaultDayType;
+                        let hoursWorked = defaultHours;
+                        
+                        // Если это выходной день недели (суббота=6, воскресенье=0)
+                        if (dayOfWeek === 6 || dayOfWeek === 0) {
+                            dayType = 'DayOff';
+                            hoursWorked = null;
+                        }
+                        
+                        const payload = {
+                            personID: parseInt(person.personID),
+                            workDate: workDate.toISOString(),
+                            shiftCode: shift,
+                            hoursWorked: hoursWorked !== null ? parseFloat(hoursWorked) : null,
+                            dayType: dayType
+                        };
+                        
+                        // Создаём promise для каждого запроса
+                        const req = $.ajax({
+                            url: `${API_BASE_URL}/timesheet`,
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(payload)
+                        }).then(
+                            function() {
+                                createdCount++;
+                                const percent = Math.round((createdCount / totalRecords) * 100);
+                                $('#progress-fill').css('width', percent + '%');
+                                $('#progress-text').text(createdCount);
+                                $('#progress-total').text(totalRecords);
+                            },
+                            function(error) {
+                                // Игнорируем ошибки для существующих записей
+                                createdCount++;
+                                const percent = Math.round((createdCount / totalRecords) * 100);
+                                $('#progress-fill').css('width', percent + '%');
+                                $('#progress-text').text(createdCount);
+                                $('#progress-total').text(totalRecords);
+                            }
+                        );
+                        
+                        requests.push(req);
+                    }
+                });
+            });
+            
+            // После всех запросов
+            Promise.all(requests).then(function() {
+                window.closeModal();
+                showNotification(`Табель создан! ${createdCount} записей`, 'success');
+                loadTimeSheet(); // Перезагрузим табель
+            }).catch(function(error) {
+                console.error('Ошибка при создании табеля:', error);
+                showNotification('Табель создал с ошибками. Проверьте результат', 'warning');
+                window.closeModal();
+                loadTimeSheet();
+            });
+        },
+        error: function(error) {
+            showNotification('Ошибка при получении списка сотрудников', 'error');
+            console.error(error);
+            window.closeModal();
+        }
+    });
+}

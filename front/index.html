@@ -84,6 +84,11 @@
                     <i class="fas fa-calendar-alt"></i> Сменный табель
                 </button>
             </li>
+            <li class="menu-item">
+                <button class="menu-btn" data-tab="timesheet">
+                    <i class="fas fa-clock"></i> Табель рабочего времени
+                </button>
+            </li>
         </ul>
     </nav>
 
@@ -457,6 +462,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Табельный №</th>
                                 <th>ФИО</th>
                                 <th>Роль</th>
                                 <th>Статус</th>
@@ -468,6 +474,56 @@
                             <!-- Данные будут загружены через JS -->
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- Табель рабочего времени -->
+            <section id="timesheet" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> Табель рабочего времени</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="create-timesheet-btn">
+                            <i class="fas fa-plus"></i> Создать табель на месяц
+                        </button>
+                        <button class="btn btn-success" id="export-timesheet-excel">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="btn btn-secondary" id="refresh-timesheet">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <input type="month" id="timesheet-month" class="filter-input">
+                    <select id="timesheet-shift-filter" class="filter-input">
+                        <option value="">Все смены</option>
+                        <option value="1я">Смена 1я</option>
+                        <option value="2я">Смена 2я</option>
+                    </select>
+                </div>
+                
+                <div class="timesheet-container">
+                    <div id="timesheet-loading" class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i> Загрузка...
+                    </div>
+                    <div id="timesheet-wrapper" style="display: none;">
+                        <div class="timesheet-table-wrapper">
+                            <table class="timesheet-table" id="timesheet-table">
+                                <thead>
+                                    <tr id="timesheet-header">
+                                        <!-- Заголовок будет сгенерирован через JS -->
+                                    </tr>
+                                </thead>
+                                <tbody id="timesheet-body">
+                                    <!-- Данные будут загружены через JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="timesheet-empty" style="text-align: center; padding: 40px;">
+                        <p>Нет данных для отображения. Выберите месяц.</p>
+                    </div>
                 </div>
             </section>
         </div>

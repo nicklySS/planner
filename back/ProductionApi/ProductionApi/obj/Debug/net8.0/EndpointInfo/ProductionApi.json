@@ -1905,6 +1905,307 @@
         }
       }
     },
+    "/api/TimeSheet": {
+      "get": {
+        "tags": [
+          "TimeSheet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TimeSheet"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeSheet"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeSheet"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeSheet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSheet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSheet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSheet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TimeSheet/{id}": {
+      "get": {
+        "tags": [
+          "TimeSheet"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSheet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSheet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSheet"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TimeSheet"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeSheet"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeSheet"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeSheet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TimeSheet"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/TimeSheet/ByPerson/{personId}": {
+      "get": {
+        "tags": [
+          "TimeSheet"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TimeSheet/ByPerson/{personId}/{startDate}/{endDate}": {
+      "get": {
+        "tags": [
+          "TimeSheet"
+        ],
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeSheet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/WorkPlaces": {
       "get": {
         "tags": [
@@ -2338,6 +2639,11 @@
           },
           "isActive": {
             "type": "boolean"
+          },
+          "employeeNumber": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2429,6 +2735,52 @@
           },
           "person": {
             "$ref": "#/components/schemas/Person"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeSheet": {
+        "required": [
+          "createdAt",
+          "dayType",
+          "personID",
+          "shiftCode",
+          "workDate"
+        ],
+        "type": "object",
+        "properties": {
+          "timeSheetID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "shiftCode": {
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string"
+          },
+          "hoursWorked": {
+            "maximum": 24,
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "dayType": {
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

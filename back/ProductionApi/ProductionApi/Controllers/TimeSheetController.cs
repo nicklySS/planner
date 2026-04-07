@@ -20,14 +20,14 @@ namespace ProductionApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TimeSheet>>> GetTimeSheets()
         {
-            return await _context.TimeSheets.Include(t => t.Person).ToListAsync();
+            return await _context.TimeSheet.Include(t => t.Person).ToListAsync();
         }
 
         // GET: api/TimeSheet/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TimeSheet>> GetTimeSheet(int id)
         {
-            var timeSheet = await _context.TimeSheets.Include(t => t.Person).FirstOrDefaultAsync(t => t.TimeSheetID == id);
+            var timeSheet = await _context.TimeSheet.Include(t => t.Person).FirstOrDefaultAsync(t => t.TimeSheetID == id);
 
             if (timeSheet == null)
             {
@@ -41,7 +41,7 @@ namespace ProductionApi.Controllers
         [HttpGet("ByPerson/{personId}")]
         public async Task<ActionResult<IEnumerable<TimeSheet>>> GetTimeSheetsByPerson(int personId)
         {
-            var timeSheets = await _context.TimeSheets
+            var timeSheets = await _context.TimeSheet
                 .Where(t => t.PersonID == personId)
                 .Include(t => t.Person)
                 .ToListAsync();
@@ -53,7 +53,7 @@ namespace ProductionApi.Controllers
         [HttpGet("ByPerson/{personId}/{startDate}/{endDate}")]
         public async Task<ActionResult<IEnumerable<TimeSheet>>> GetTimeSheetsByPersonAndDateRange(int personId, DateTime startDate, DateTime endDate)
         {
-            var timeSheets = await _context.TimeSheets
+            var timeSheets = await _context.TimeSheet
                 .Where(t => t.PersonID == personId && t.WorkDate >= startDate && t.WorkDate <= endDate)
                 .Include(t => t.Person)
                 .OrderBy(t => t.WorkDate)
@@ -72,7 +72,7 @@ namespace ProductionApi.Controllers
                 return BadRequest("PersonID не существует");
             }
 
-            _context.TimeSheets.Add(timeSheet);
+            _context.TimeSheet.Add(timeSheet);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetTimeSheet), new { id = timeSheet.TimeSheetID }, timeSheet);
@@ -112,13 +112,13 @@ namespace ProductionApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTimeSheet(int id)
         {
-            var timeSheet = await _context.TimeSheets.FindAsync(id);
+            var timeSheet = await _context.TimeSheet.FindAsync(id);
             if (timeSheet == null)
             {
                 return NotFound();
             }
 
-            _context.TimeSheets.Remove(timeSheet);
+            _context.TimeSheet.Remove(timeSheet);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -126,7 +126,7 @@ namespace ProductionApi.Controllers
 
         private bool TimeSheetExists(int id)
         {
-            return _context.TimeSheets.Any(e => e.TimeSheetID == id);
+            return _context.TimeSheet.Any(e => e.TimeSheetID == id);
         }
     }
 }
