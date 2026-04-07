@@ -49,6 +49,9 @@ namespace ProductionApi.Data
         // 12. ShiftWorkLog <> Equipment (M:N)
         public DbSet<ShiftWorkLogEquipment> ShiftWorkLogEquipments { get; set; }
 
+        // 13. TimeSheet
+        public DbSet<TimeSheet> TimeSheets { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
