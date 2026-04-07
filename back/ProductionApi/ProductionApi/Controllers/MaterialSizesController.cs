@@ -1,0 +1,107 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProductionApi.Data;
+using ProductionApi.Models;
+
+namespace ProductionApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MaterialSizesController : ControllerBase
+    {
+        private readonly ProductionDbContext _context;
+
+        public MaterialSizesController(ProductionDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/MaterialSizes
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MaterialSize>>> GetMaterialSizes()
+        {
+            return await _context.MaterialSizes
+                .Include(ms => ms.MaterialMaterialSizes)
+                    .ThenInclude(mms => mms.Material)
+                .ToListAsync();
+        }
+
+        // GET: api/MaterialSizes/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MaterialSize>> GetMaterialSize(int id)
+        {
+            var size = await _context.MaterialSizes
+                .Include(ms => ms.MaterialMaterialSizes)
+                    .ThenInclude(mms => mms.Material)
+                .FirstOrDefaultAsync(ms => ms.MaterialSizeID == id);
+
+            if (size == null)
+            {
+                return NotFound();
+            }
+
+            return size;
+        }
+
+        // POST: api/MaterialSizes
+        [HttpPost]
+        public async Task<ActionResult<MaterialSize>> CreateMaterialSize(MaterialSize size)
+        {
+            _context.MaterialSizes.Add(size);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetMaterialSize), new { id = size.MaterialSizeID }, size);
+        }
+
+        // PUT: api/MaterialSizes/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMaterialSize(int id, MaterialSize size)
+        {
+            if (id != size.MaterialSizeID)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(size).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MaterialSizeExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/MaterialSizes/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMaterialSize(int id)
+        {
+            var size = await _context.MaterialSizes.FindAsync(id);
+            if (size == null)
+            {
+                return NotFound();
+            }
+
+            _context.MaterialSizes.Remove(size);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool MaterialSizeExists(int id)
+        {
+            return _context.MaterialSizes.Any(ms => ms.MaterialSizeID == id);
+        }
+    }
+}
