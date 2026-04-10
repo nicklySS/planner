@@ -1270,6 +1270,8 @@ body {
     box-shadow: var(--shadow);
     padding: 20px;
     margin-top: 20px;
+    zoom: 0.85;
+    transform-origin: top left;
 }
 
 .timesheet-table-wrapper {
@@ -1280,7 +1282,7 @@ body {
 .timesheet-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .timesheet-table thead {
@@ -1291,56 +1293,89 @@ body {
 }
 
 .timesheet-table th {
-    padding: 12px 8px;
+    padding: 8px 4px;
     text-align: center;
     font-weight: 600;
     border: 1px solid #ddd;
-    min-width: 60px;
+    min-width: 50px;
     word-wrap: break-word;
 }
 
-/* Фиксированные первые три колонки */
-.timesheet-table th:nth-child(1),
-.timesheet-table th:nth-child(2),
-.timesheet-table th:nth-child(3) {
+/* Фиксированные первые три колонки - только для заголовков без класса */
+.timesheet-table th.sticky-col,
+.timesheet-table thead tr:first-child th:nth-child(1),
+.timesheet-table thead tr:first-child th:nth-child(2),
+.timesheet-table thead tr:first-child th:nth-child(3) {
     background-color: var(--dark-red);
     position: sticky;
     left: 0;
     z-index: 10;
     min-width: 100px;
+    color: white;
 }
 
-.timesheet-table th:nth-child(1) { 
+.timesheet-table thead tr:first-child th:nth-child(1) { 
     left: 0; 
-    min-width: 90px;
+    min-width: 70px;
 }
 
-.timesheet-table th:nth-child(2) { 
-    left: 90px;
-    min-width: 150px;
+.timesheet-table thead tr:first-child th:nth-child(2) { 
+    left: 70px;
+    min-width: 120px;
 }
 
-.timesheet-table th:nth-child(3) { 
-    left: 240px;
-    min-width: 100px;
+.timesheet-table thead tr:first-child th:nth-child(3) { 
+    left: 190px;
+    min-width: 130px;
 }
 
-/* Заголовки дней */
+/* Заголовок колонки Смены */
+.timesheet-table thead tr:first-child th:nth-child(4) {
+    background-color: var(--primary-red);
+    color: white;
+    min-width: 35px;
+    font-weight: 700;
+    border-right: 3px solid var(--dark-red);
+    font-size: 0.75rem;
+    padding: 4px 2px;
+}
 .day-header-main {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    padding: 8px 4px;
+    padding: 4px 2px;
+    background-color: var(--primary-red) !important;
+    color: white;
 }
 
 /* Заголовки смен */
 .day-header-shift {
     font-size: 0.8rem;
     font-weight: 600;
-    padding: 8px 4px;
+    padding: 0 4px;
+    background-color: var(--primary-red) !important;
+    color: white;
+    padding-top: 0;
+    padding-bottom: 0;
+    vertical-align: top;
+}
+
+.day-header-shift span {
+    display: block;
+    padding: 4px 2px;
+    font-size: 0.75rem;
 }
 
 .timesheet-table tbody tr {
     border-bottom: 1px solid #ddd;
+}
+
+.timesheet-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.timesheet-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #ddd;
 }
 
 .timesheet-table tbody tr:hover {
@@ -1348,9 +1383,10 @@ body {
 }
 
 .timesheet-table td {
-    padding: 10px 8px;
+    padding: 4px 3px;
     text-align: center;
     border: 1px solid #e9ecef;
+    height: auto;
 }
 
 /* Фиксированные колонки в теле таблицы */
@@ -1359,32 +1395,48 @@ body {
     position: sticky;
     font-weight: 500;
     z-index: 5;
+    vertical-align: middle;
+    text-align: left;
+    padding-left: 6px;
+    font-size: 0.75rem;
+}
+
+/* Колонка смены */
+.timesheet-table td.shift-col {
+    background-color: #f0f0f0;
+    font-weight: 700;
+    text-align: center;
+    min-width: 35px;
+    color: var(--primary-red);
+    border-right: 2px solid var(--primary-red);
+    font-size: 0.8rem;
 }
 
 .timesheet-table td:nth-child(1) { 
     left: 0;
-    min-width: 90px;
+    min-width: 70px;
 }
 
 .timesheet-table td:nth-child(2) { 
-    left: 90px;
-    min-width: 150px;
+    left: 70px;
+    min-width: 120px;
 }
 
 .timesheet-table td:nth-child(3) { 
-    left: 240px;
-    min-width: 100px;
+    left: 190px;
+    min-width: 130px;
 }
 
 .timesheet-cell {
     cursor: pointer;
-    padding: 8px 6px;
-    min-width: 45px;
+    padding: 2px 2px;
+    min-width: 35px;
     user-select: none;
     font-weight: 600;
     color: var(--primary-red);
     border-radius: 4px;
     transition: all 0.2s ease;
+    font-size: 0.85rem;
 }
 
 .timesheet-cell.editable:hover {
@@ -1394,6 +1446,36 @@ body {
 
 .timesheet-cell.editable:empty {
     color: #ccc;
+}
+
+/* Input для редактирования ячейки */
+.timesheet-input {
+    width: 100%;
+    padding: 2px 2px;
+    border: 2px solid var(--primary-red);
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    background-color: #fffacd;
+    color: var(--primary-red);
+}
+
+.timesheet-input:focus {
+    box-shadow: 0 0 8px rgba(230, 57, 70, 0.5);
+    background-color: white;
+}
+
+/* Итоговые ячейки */
+.timesheet-total {
+    background-color: #fff3cd;
+    font-weight: 700;
+    color: var(--dark-gray);
+    border: 2px solid var(--primary-red);
+    padding: 4px 3px;
+    vertical-align: middle;
+    font-size: 0.75rem;
 }
 
 /* Редактор табеля */
@@ -1521,22 +1603,26 @@ body {
 }
 
 /* Сокращения типов дней */
-/* Р - рабочий (Work) - зелёный */
-.timesheet-cell:contains(Р) {
-    color: #28a745;
+/* Числа - рабочий день (Work) - зелёный */
+/* В - выходной (DayOff) - синий */
+/* О - отпуск (Holiday) - оранжевый */
+/* Б - больничный (Sick) - красный */
+
+.timesheet-cell {
+    color: var(--primary-red);
 }
 
-/* В - выходной (DayOff) - синий */
+/* Выходной - синий */
 .timesheet-cell:contains(В) {
     color: #007bff;
 }
 
-/* П - праздник (Holiday) - оранжевый */
-.timesheet-cell:contains(П) {
+/* Отпуск - оранжевый */
+.timesheet-cell:contains(О) {
     color: #fd7e14;
 }
 
-/* Б - больничный (Sick) - красный */
+/* Больничный - красный */
 .timesheet-cell:contains(Б) {
     color: #dc3545;
 }
