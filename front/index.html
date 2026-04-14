@@ -89,6 +89,11 @@
                     <i class="fas fa-clock"></i> Табель рабочего времени
                 </button>
             </li>
+            <li class="menu-item">
+                <button class="menu-btn" data-tab="equipment-timesheet">
+                    <i class="fas fa-industry"></i> Табель станков
+                </button>
+            </li>
         </ul>
     </nav>
 
@@ -492,6 +497,12 @@
                 </div>
                 
                 <div class="filters">
+                    <div style="position: relative; flex: 1; max-width: 300px;">
+                        <input type="text" id="timesheet-search" class="filter-input" placeholder="Поиск по ФИО...">
+                        <button id="timesheet-search-clear" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: #999;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     <input type="month" id="timesheet-month" class="filter-input">
                     <select id="timesheet-shift-filter" class="filter-input">
                         <option value="">Все смены</option>
@@ -519,6 +530,61 @@
                         </div>
                     </div>
                     <div id="timesheet-empty" style="text-align: center; padding: 40px;">
+                        <p>Нет данных для отображения. Выберите месяц.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="equipment-timesheet" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-industry"></i> Табель станков</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="autofill-equipment-timesheet">
+                            <i class="fas fa-magic"></i> Автозаполнение
+                        </button>
+                        <button class="btn btn-success" id="export-equipment-timesheet-excel">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="btn btn-secondary" id="refresh-equipment-timesheet">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <div style="position: relative; flex: 1; max-width: 300px;">
+                        <input type="text" id="equipment-timesheet-search" class="filter-input" placeholder="Поиск по названию станка...">
+                        <button id="equipment-timesheet-search-clear" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: #999;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="month" id="equipment-timesheet-month" class="filter-input">
+                    <select id="equipment-timesheet-shift-filter" class="filter-input">
+                        <option value="">Все смены</option>
+                        <option value="1я">Смена 1я</option>
+                        <option value="2я">Смена 2я</option>
+                    </select>
+                </div>
+                
+                <div class="timesheet-container">
+                    <div id="equipment-timesheet-loading" class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i> Загрузка...
+                    </div>
+                    <div id="equipment-timesheet-wrapper" style="display: none;">
+                        <div class="timesheet-table-wrapper">
+                            <table class="timesheet-table" id="equipment-timesheet-table">
+                                <thead>
+                                    <tr id="equipment-timesheet-header">
+                                        <!-- Заголовок будет сгенерирован через JS -->
+                                    </tr>
+                                </thead>
+                                <tbody id="equipment-timesheet-body">
+                                    <!-- Данные будут загружены через JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="equipment-timesheet-empty" style="text-align: center; padding: 40px;">
                         <p>Нет данных для отображения. Выберите месяц.</p>
                     </div>
                 </div>

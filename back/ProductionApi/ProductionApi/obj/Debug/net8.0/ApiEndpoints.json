@@ -307,6 +307,229 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "GetEquipmentTimeSheets",
+    "RelativePath": "api/EquipmentTimeSheet",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ProductionApi.Models.EquipmentTimeSheet, ProductionApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "CreateEquipmentTimeSheet",
+    "RelativePath": "api/EquipmentTimeSheet",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "equipmentTimeSheet",
+        "Type": "ProductionApi.Models.EquipmentTimeSheet",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ProductionApi.Models.EquipmentTimeSheet",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "GetEquipmentTimeSheet",
+    "RelativePath": "api/EquipmentTimeSheet/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ProductionApi.Models.EquipmentTimeSheet",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "UpdateEquipmentTimeSheet",
+    "RelativePath": "api/EquipmentTimeSheet/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "equipmentTimeSheet",
+        "Type": "ProductionApi.Models.EquipmentTimeSheet",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "DeleteEquipmentTimeSheet",
+    "RelativePath": "api/EquipmentTimeSheet/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "GetEquipmentTimeSheetsByDate",
+    "RelativePath": "api/EquipmentTimeSheet/ByDate/{workDate}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "workDate",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ProductionApi.Models.EquipmentTimeSheet, ProductionApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "GetEquipmentTimeSheetsByDayType",
+    "RelativePath": "api/EquipmentTimeSheet/ByDayType/{dayType}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dayType",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ProductionApi.Models.EquipmentTimeSheet, ProductionApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "GetEquipmentTimeSheetsByEquipment",
+    "RelativePath": "api/EquipmentTimeSheet/ByEquipment/{equipmentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "equipmentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ProductionApi.Models.EquipmentTimeSheet, ProductionApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ProductionApi.Controllers.EquipmentTimeSheetController",
+    "Method": "GetEquipmentTimeSheetsByEquipmentAndDateRange",
+    "RelativePath": "api/EquipmentTimeSheet/ByEquipment/{equipmentId}/{startDate}/{endDate}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "equipmentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "startDate",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "endDate",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ProductionApi.Models.EquipmentTimeSheet, ProductionApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "ProductionApi.Controllers.MaterialMaterialSizesController",
     "Method": "GetMaterialMaterialSizes",
     "RelativePath": "api/MaterialMaterialSizes",

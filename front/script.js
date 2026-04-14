@@ -73,6 +73,13 @@ function initializeApp() {
     $('#timesheet-shift-filter').on('change', () => loadTimeSheet());
     $('#refresh-timesheet').click(() => loadTimeSheet());
     
+    // Табель станков - фильтры
+    $('#equipment-timesheet-month').on('change', () => loadEquipmentTimeSheet());
+    $('#equipment-timesheet-shift-filter').on('change', () => loadEquipmentTimeSheet());
+    $('#refresh-equipment-timesheet').click(() => loadEquipmentTimeSheet());
+    $('#export-equipment-timesheet-excel').click(() => exportEquipmentTimeSheetToExcel());
+    $('#autofill-equipment-timesheet').click(() => autoFillEquipmentTimeSheet());
+    
     // Загрузка данных при переключении табов
     $(document).on('tabSwitched', function(event, tabId) {
         switch(tabId) {
@@ -104,6 +111,13 @@ function initializeApp() {
                 const monthStr = String(today.getMonth() + 1).padStart(2, '0');
                 $('#timesheet-month').val(`${today.getFullYear()}-${monthStr}`);
                 loadTimeSheet();
+                break;
+            case 'equipment-timesheet':
+                // Установить текущий месяц по умолчанию
+                const today2 = new Date();
+                const monthStr2 = String(today2.getMonth() + 1).padStart(2, '0');
+                $('#equipment-timesheet-month').val(`${today2.getFullYear()}-${monthStr2}`);
+                loadEquipmentTimeSheet();
                 break;
         }
     });
@@ -2522,6 +2536,9 @@ function buildTimesheetTable(people, groupedData, startDate) {
     
     // Добавляем обработчики для редактирования
     attachTimesheetCellHandlers();
+    
+    // Инициализируем поиск
+    initTimesheetSearch();
 }
 
 // Форматирование содержимого ячейки
@@ -2590,7 +2607,7 @@ function parseTimesheetInput(input) {
     if (input === 'О') return { dayType: 'Holiday', hoursWorked: null };
     
     // Проверяем число
-    const num = parseFloat(input);
+    const num = parseFloat(input.replace(',', '.'));
     if (!isNaN(num) && num >= 0 && num <= 24) {
         return { dayType: 'Work', hoursWorked: num };
     }
@@ -2774,6 +2791,59 @@ function deleteTimesheetEntry(personId, day, $cell) {
     });
 }
 
+// Глобальная переменная для хранения timeout поиска табеля
+let timesheetSearchTimeout = null;
+
+// Инициализация поиска табеля сотрудников с debounce
+function initTimesheetSearch() {
+    $('#timesheet-search').off('input').on('input', function() {
+        clearTimeout(timesheetSearchTimeout);
+        
+        timesheetSearchTimeout = setTimeout(() => {
+            filterTimesheetBySearch();
+        }, 300); // Задержка 300ms перед поиском
+    });
+    
+    // Кнопка очистки поиска
+    $('#timesheet-search-clear').off('click').on('click', function() {
+        $('#timesheet-search').val('').focus();
+        filterTimesheetBySearch();
+    });
+}
+
+// Фильтрация таблицы табеля по поиску
+function filterTimesheetBySearch() {
+    const searchTerm = $('#timesheet-search').val().toLowerCase();
+    
+    // Получаем все уникальные людей из таблицы
+    const peopleRows = {};
+    $('#timesheet-body tr').each(function() {
+        const $row = $(this);
+        const personId = $row.find('[data-personid]').data('personid');
+        
+        if (personId) {
+            if (!peopleRows[personId]) {
+                peopleRows[personId] = [];
+            }
+            peopleRows[personId].push($row);
+        }
+    });
+    
+    // Фильтруем по поиску
+    for (const [personId, rows] of Object.entries(peopleRows)) {
+        if (rows.length > 0) {
+            // Берём ФИО из второй колонки (индекс 1)
+            const personName = rows[0].find('td').eq(1).text().toLowerCase();
+            
+            if (searchTerm === '' || personName.includes(searchTerm)) {
+                rows.forEach(row => row.show());
+            } else {
+                rows.forEach(row => row.hide());
+            }
+        }
+    }
+}
+
 // Функция экспорта табеля в Excel
 function exportTimeSheetToExcel() {
     const table = document.getElementById('timesheet-table');
@@ -2784,5 +2854,543 @@ function exportTimeSheetToExcel() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, monthName);
     XLSX.writeFile(wb, `tabель_${monthInput}.xlsx`);
+}
+
+// ========== ФУНКЦИИ ДЛЯ ТАБЕЛЯ СТАНКОВ ==========
+
+// Загрузка табеля станков
+function loadEquipmentTimeSheet() {
+    const monthInput = $('#equipment-timesheet-month').val();
+    const shiftFilter = $('#equipment-timesheet-shift-filter').val();
+    
+    if (!monthInput) {
+        $('#equipment-timesheet-empty').show();
+        $('#equipment-timesheet-wrapper').hide();
+        $('#equipment-timesheet-loading').hide();
+        return;
+    }
+    
+    $('#equipment-timesheet-loading').show();
+    $('#equipment-timesheet-wrapper').hide();
+    $('#equipment-timesheet-empty').hide();
+    
+    // Парсим месяц
+    const [year, month] = monthInput.split('-');
+    const startDateStr = `${year}-${String(parseInt(month)).padStart(2, '0')}-01`;
+    const endDate = new Date(parseInt(year), parseInt(month), 0);
+    const endDateStr = `${year}-${String(parseInt(month)).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+    
+    const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    
+    // Загружаем оборудование и все EquipmentTimeSheet записи
+    Promise.all([
+        $.ajax({
+            url: `${API_BASE_URL}/equipment`,
+            type: 'GET',
+            dataType: 'json'
+        }),
+        $.ajax({
+            url: `${API_BASE_URL}/equipmenttimesheet`,
+            type: 'GET',
+            dataType: 'json'
+        })
+    ]).then(function([equipment, timesheets]) {
+        cachedData.equipment = equipment || [];
+        
+        // Фильтруем EquipmentTimeSheet по выбранному месяцу
+        let filteredTimesheets = (timesheets || []).filter(ts => {
+            const tsDateStr = ts.workDate.substring(0, 10);
+            return tsDateStr >= startDateStr && tsDateStr <= endDateStr;
+        });
+        
+        // Нормализуем коды смен: '1' -> '1я', '2' -> '2я'
+        filteredTimesheets.forEach(ts => {
+            if (ts.shiftCode === '1') ts.shiftCode = '1я';
+            if (ts.shiftCode === '2') ts.shiftCode = '2я';
+        });
+        
+        // Фильтруем по смене если выбрана
+        if (shiftFilter) {
+            filteredTimesheets = filteredTimesheets.filter(ts => ts.shiftCode === shiftFilter);
+        }
+        
+        // Группируем по EquipmentID и ShiftCode
+        const grouped = {};
+        filteredTimesheets.forEach(ts => {
+            const key = `${ts.equipmentID}_${ts.shiftCode}`;
+            if (!grouped[key]) {
+                grouped[key] = [];
+            }
+            grouped[key].push(ts);
+        });
+        
+        buildEquipmentTimesheetTable(equipment, grouped, startDate);
+        
+        $('#equipment-timesheet-loading').hide();
+        $('#equipment-timesheet-wrapper').show();
+        $('#equipment-timesheet-empty').hide();
+    }).catch(function(error) {
+        console.error('Ошибка загрузки табеля станков:', error);
+        showNotification('Ошибка при загрузке табеля станков', 'error');
+        $('#equipment-timesheet-loading').hide();
+        $('#equipment-timesheet-empty').show();
+    });
+}
+
+// Построение таблицы табеля станков
+function buildEquipmentTimesheetTable(equipment, groupedData, startDate) {
+    const monthName = startDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+    const daysInMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getDate();
+    
+    // Заголовок таблицы
+    let headerRow = '<th>ID</th>';
+    headerRow += '<th>Наименование станка</th>';
+    headerRow += '<th>Тип</th>';
+    headerRow += '<th>Смена</th>';
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        headerRow += `<th class="day-header-main">${day}</th>`;
+    }
+    
+    // Итого за месяц
+    headerRow += '<th colspan="2" class="day-header-main">Итого за месяц</th>';
+    
+    const headerTable = $('#equipment-timesheet-table thead');
+    headerTable.html(`
+        <tr>
+            ${headerRow}
+        </tr>
+    `);
+    
+    // Тело таблицы
+    let bodyHtml = '';
+    
+    equipment.forEach(eq => {
+        // Две строки для каждого станка (смена 1я и смена 2я)
+        let row1 = '<tr>';
+        let row2 = '<tr>';
+        
+        // Липкие колонки только на первой строке
+        row1 += `<td class="sticky-col" rowspan="2">${eq.equipmentID}</td>`;
+        row1 += `<td class="sticky-col" rowspan="2">${eq.equipmentName}</td>`;
+        row1 += `<td class="sticky-col" rowspan="2">${eq.equipmentType || '-'}</td>`;
+        
+        // Колонка смены
+        row1 += '<td class="shift-col">1</td>';
+        row2 += '<td class="shift-col">2</td>';
+        
+        // Подсчет итогов
+        let totalWorkDays = 0;
+        let totalHours = 0;
+        
+        // Дни месяца
+        for (let day = 1; day <= daysInMonth; day++) {
+            const shift1Key = `${eq.equipmentID}_1я`;
+            const shift2Key = `${eq.equipmentID}_2я`;
+            
+            const timesheets1 = groupedData[shift1Key] || [];
+            const timesheets2 = groupedData[shift2Key] || [];
+            
+            // Ищем запись для смены 1я
+            const ts1 = timesheets1.find(t => {
+                const dateMatch = t.workDate.match(/(\d{4})-(\d{2})-(\d{2})/);
+                if (!dateMatch) return false;
+                const tsDay = parseInt(dateMatch[3]);
+                return tsDay === day;
+            });
+            
+            // Ищем запись для смены 2я
+            const ts2 = timesheets2.find(t => {
+                const dateMatch = t.workDate.match(/(\d{4})-(\d{2})-(\d{2})/);
+                if (!dateMatch) return false;
+                const tsDay = parseInt(dateMatch[3]);
+                return tsDay === day;
+            });
+            
+            // Подсчитываем итоги
+            if (ts1) {
+                if (ts1.dayType === 'Work') totalWorkDays += 1;
+                if (ts1.hoursWorked) totalHours += parseFloat(ts1.hoursWorked);
+            }
+            if (ts2) {
+                if (ts2.dayType === 'Work') totalWorkDays += 1;
+                if (ts2.hoursWorked) totalHours += parseFloat(ts2.hoursWorked);
+            }
+            
+            // Содержимое для смены 1я
+            let cellContent1 = ts1 ? formatEquipmentTimesheetCell(ts1) : '';
+            row1 += `<td class="equipment-timesheet-cell editable" data-equipmentid="${eq.equipmentID}" data-shift="1я" data-day="${day}" data-etsid="${ts1?.equipmentTimeSheetID || ''}">${cellContent1}</td>`;
+            
+            // Содержимое для смены 2я
+            let cellContent2 = ts2 ? formatEquipmentTimesheetCell(ts2) : '';
+            row2 += `<td class="equipment-timesheet-cell editable" data-equipmentid="${eq.equipmentID}" data-shift="2я" data-day="${day}" data-etsid="${ts2?.equipmentTimeSheetID || ''}">${cellContent2}</td>`;
+        }
+        
+        // Добавляем итоговые ячейки
+        row1 += `<td class="timesheet-total" rowspan="2">${totalWorkDays}</td>`;
+        row1 += `<td class="timesheet-total" rowspan="2">${totalHours.toFixed(1)}</td>`;
+        
+        row1 += '</tr>';
+        row2 += '</tr>';
+        
+        bodyHtml += row1 + row2;
+    });
+    
+    $('#equipment-timesheet-body').html(bodyHtml);
+    
+    // Добавляем обработчики редактирования
+    attachEquipmentTimesheetCellHandlers();
+    
+    // Инициализируем поиск
+    initEquipmentTimesheetSearch();
+}
+
+// Форматирование ячейки табеля станков
+function formatEquipmentTimesheetCell(timesheet) {
+    if (!timesheet) return '';
+    
+    if (timesheet.dayType === 'Work') {
+        if (!timesheet.hoursWorked || timesheet.hoursWorked === 0) {
+            return '';
+        }
+        return String(timesheet.hoursWorked);
+    }
+    
+    const dayTypeAbbr = {
+        'DayOff': 'В',      // Выходной
+        'Repair': 'Р'       // Ремонт
+    };
+    
+    return dayTypeAbbr[timesheet.dayType] || '?';
+}
+
+
+
+// Парсинг введённого текста для табеля станков
+function parseEquipmentTimesheetInput(input) {
+    if (!input) return null;
+    
+    input = input.trim().toUpperCase();
+    
+    if (input === 'В') return { dayType: 'DayOff', hoursWorked: null };
+    if (input === 'Р') return { dayType: 'Repair', hoursWorked: null };
+    
+    const num = parseFloat(input.replace(',', '.'));
+    if (!isNaN(num) && num >= 0 && num <= 24) {
+        return { dayType: 'Work', hoursWorked: num };
+    }
+    
+    return null;
+}
+
+// Присоединение обработчиков редактирования ячеек
+function attachEquipmentTimesheetCellHandlers() {
+    $('.equipment-timesheet-cell.editable').off('click').on('click', function(e) {
+        e.stopPropagation();
+        
+        if ($(this).find('input').length > 0) return;
+        
+        const $cell = $(this);
+        const equipmentId = $cell.data('equipmentid');
+        const shift = $cell.data('shift');
+        const day = $cell.data('day');
+        const etsId = $cell.data('etsid');
+        const currentContent = $cell.text();
+        
+        const $input = $(`<input type="text" class="equipment-timesheet-input" placeholder="8, или В/Р" maxlength="5">`);
+        $input.val(currentContent);
+        
+        const saveEntry = function() {
+            const inputValue = $input.val();
+            
+            if (!inputValue) {
+                saveEquipmentTimesheetEntry(equipmentId, day, shift, 'Work', 0, etsId, $cell);
+                return;
+            }
+            
+            const parsed = parseEquipmentTimesheetInput(inputValue);
+            
+            if (!parsed) {
+                showNotification('Неверный ввод. Используйте: число (8, 7, 6.5), или В, Р', 'error');
+                return;
+            }
+            
+            const dayType = parsed.dayType;
+            const hours = parsed.hoursWorked;
+            
+            saveEquipmentTimesheetEntry(equipmentId, day, shift, dayType, hours, etsId, $cell);
+        };
+        
+        $input.on('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEntry();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                $cell.html('');
+                $cell.text(currentContent);
+                attachEquipmentTimesheetCellHandlers();
+            }
+        });
+        
+        $cell.html('');
+        $cell.append($input);
+        $input.focus();
+        $input.select();
+    });
+    
+    $(document).off('click.equipment-timesheet').on('click.equipment-timesheet', function(e) {
+        const $target = $(e.target);
+        if (!$target.closest('.equipment-timesheet-input, .equipment-timesheet-cell').length) {
+            $('.equipment-timesheet-cell').each(function() {
+                const $cell = $(this);
+                if ($cell.find('.equipment-timesheet-input').length > 0) {
+                    const $input = $cell.find('.equipment-timesheet-input');
+                    const originalContent = $cell.data('original-content') || '';
+                    $cell.html(originalContent);
+                    attachEquipmentTimesheetCellHandlers();
+                }
+            });
+        }
+    });
+}
+
+// Сохранение записи EquipmentTimeSheet
+function saveEquipmentTimesheetEntry(equipmentId, day, shift, dayType, hoursWorked, etsId, $cell) {
+    const monthInput = $('#equipment-timesheet-month').val();
+    const [year, month] = monthInput.split('-');
+    const workDateStr = `${year}-${String(parseInt(month)).padStart(2, '0')}-${String(parseInt(day)).padStart(2, '0')}`;
+    
+    // Трансформируем смену: 1я -> 1, 2я -> 2
+    const shiftCode = shift.replace('я', '');
+    
+    const payload = {
+        equipmentID: parseInt(equipmentId),
+        workDate: workDateStr + 'T00:00:00Z',
+        shiftCode: shiftCode,
+        hoursWorked: hoursWorked !== null ? parseFloat(hoursWorked) : null,
+        dayType: dayType
+    };
+    
+    if (etsId) {
+        payload.equipmentTimeSheetID = parseInt(etsId);
+    }
+    
+    const url = etsId 
+        ? `${API_BASE_URL}/equipmenttimesheet/${etsId}` 
+        : `${API_BASE_URL}/equipmenttimesheet`;
+    
+    const method = etsId ? 'PUT' : 'POST';
+    
+    $.ajax({
+        url: url,
+        type: method,
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function(result) {
+            let newEtsId = etsId;
+            if (method === 'POST' && result) {
+                newEtsId = result.equipmentTimeSheetID || result.id || etsId;
+            }
+            
+            $cell.data('etsid', newEtsId);
+            
+            const displayPayload = {
+                ...payload,
+                equipmentTimeSheetID: newEtsId,
+                workDate: workDateStr
+            };
+            
+            $cell.html('');
+            $cell.text(formatEquipmentTimesheetCell(displayPayload));
+            attachEquipmentTimesheetCellHandlers();
+            showNotification('Запись сохранена', 'success');
+        },
+        error: function(error) {
+            console.error('Ошибка при сохранении:', error);
+            const errorMsg = error.responseJSON?.detail || 'Ошибка сохранения';
+            showNotification(errorMsg, 'error');
+        }
+    });
+}
+
+// Удаление записи EquipmentTimeSheet
+function deleteEquipmentTimesheetEntry(equipmentId, day, $cell) {
+    const etsId = $cell.data('etsid');
+    if (!etsId) {
+        $cell.html('');
+        attachEquipmentTimesheetCellHandlers();
+        return;
+    }
+    
+    $.ajax({
+        url: `${API_BASE_URL}/equipmenttimesheet/${etsId}`,
+        type: 'DELETE',
+        success: function() {
+            $cell.html('');
+            $cell.data('etsid', '');
+            showNotification('Запись удалена', 'success');
+        },
+        error: function(error) {
+            showNotification('Ошибка удаления', 'error');
+            console.error(error);
+        }
+    });
+}
+
+// Экспорт табеля станков в Excel
+function exportEquipmentTimeSheetToExcel() {
+    const table = document.getElementById('equipment-timesheet-table');
+    const monthInput = $('#equipment-timesheet-month').val();
+    const monthName = monthInput ? new Date(monthInput + '-01').toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }) : 'Табель станков';
+    
+    const ws = XLSX.utils.table_to_sheet(table);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, monthName);
+    XLSX.writeFile(wb, `табель_станков_${monthInput}.xlsx`);
+}
+
+// Глобальная переменная для хранения timeout поиска
+let equipmentTimesheetSearchTimeout = null;
+
+// Автозаполнение табеля станков (Пн-Пт по 8 часов, СБ-ВС выходной)
+function autoFillEquipmentTimeSheet() {
+    const monthInput = $('#equipment-timesheet-month').val();
+    if (!monthInput) {
+        showNotification('Выберите месяц для автозаполнения', 'warning');
+        return;
+    }
+    
+    if (!confirm('Автозаполнить все станки? \nПн-Пт: 8 часов\nСБ-ВС: Выходной')) {
+        return;
+    }
+    
+    const [year, month] = monthInput.split('-');
+    const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
+    const endDate = new Date(parseInt(year), parseInt(month), 0);
+    const daysInMonth = endDate.getDate();
+    
+    // Загружаем оборудование
+    $.ajax({
+        url: `${API_BASE_URL}/equipment`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(equipment) {
+            let savedCount = 0;
+            let totalCount = 0;
+            
+            // Для каждого станка
+            equipment.forEach(eq => {
+                // Для каждого дня месяца
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const currentDate = new Date(parseInt(year), parseInt(month) - 1, day);
+                    const dayOfWeek = currentDate.getDay(); // 0 = воскресенье, 6 = суббота
+                    
+                    // Определяем тип дня
+                    let dayType, hours;
+                    if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        // Выходной
+                        dayType = 'DayOff';
+                        hours = null;
+                    } else {
+                        // Рабочий день
+                        dayType = 'Work';
+                        hours = 8;
+                    }
+                    
+                    // Для каждой смены
+                    for (let shift = 1; shift <= 2; shift++) {
+                        totalCount++;
+                        
+                        const workDateStr = `${year}-${String(parseInt(month)).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        const payload = {
+                            equipmentID: eq.equipmentID,
+                            workDate: workDateStr + 'T00:00:00Z',
+                            shiftCode: shift.toString(),
+                            hoursWorked: hours,
+                            dayType: dayType
+                        };
+                        
+                        $.ajax({
+                            url: `${API_BASE_URL}/equipmenttimesheet`,
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(payload),
+                            async: true,
+                            success: function() {
+                                savedCount++;
+                                if (savedCount === totalCount) {
+                                    showNotification(`Автозаполнение завершено! Сохранено ${savedCount} записей`, 'success');
+                                    loadEquipmentTimeSheet();
+                                }
+                            },
+                            error: function(error) {
+                                // Если запись уже существует, это может быть ошибка, но продолжаем
+                                console.log('Record already exists or error:', error);
+                                savedCount++;
+                                if (savedCount === totalCount) {
+                                    showNotification(`Автозаполнение завершено! Обновлено/создано записей`, 'success');
+                                    loadEquipmentTimeSheet();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        },
+        error: function() {
+            showNotification('Ошибка при загрузке оборудования', 'error');
+        }
+    });
+}
+
+// Инициализация поиска с debounce
+function initEquipmentTimesheetSearch() {
+    $('#equipment-timesheet-search').off('input').on('input', function() {
+        clearTimeout(equipmentTimesheetSearchTimeout);
+        
+        equipmentTimesheetSearchTimeout = setTimeout(() => {
+            filterEquipmentTimesheetBySearch();
+        }, 300); // Задержка 300ms перед поиском
+    });
+    
+    // Кнопка очистки поиска
+    $('#equipment-timesheet-search-clear').off('click').on('click', function() {
+        $('#equipment-timesheet-search').val('').focus();
+        filterEquipmentTimesheetBySearch();
+    });
+}
+
+// Фильтрация таблицы по поиску
+function filterEquipmentTimesheetBySearch() {
+    const searchTerm = $('#equipment-timesheet-search').val().toLowerCase();
+    
+    // Получаем все уникальные оборудование из таблицы
+    const equipmentRows = {};
+    $('#equipment-timesheet-body tr').each(function() {
+        const $row = $(this);
+        const equipmentId = $row.find('[data-equipmentid]').data('equipmentid');
+        
+        if (equipmentId) {
+            if (!equipmentRows[equipmentId]) {
+                equipmentRows[equipmentId] = [];
+            }
+            equipmentRows[equipmentId].push($row);
+        }
+    });
+    
+    // Фильтруем по поиску
+    for (const [equipmentId, rows] of Object.entries(equipmentRows)) {
+        if (rows.length > 0) {
+            // Берём имя станка из первой ячейки второй колонки
+            const equipmentName = rows[0].find('td').eq(1).text().toLowerCase();
+            
+            if (searchTerm === '' || equipmentName.includes(searchTerm)) {
+                rows.forEach(row => row.show());
+            } else {
+                rows.forEach(row => row.hide());
+            }
+        }
+    }
 }
 

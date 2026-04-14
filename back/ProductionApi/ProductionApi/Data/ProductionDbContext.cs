@@ -52,6 +52,9 @@ namespace ProductionApi.Data
         // 13. TimeSheet
         public DbSet<TimeSheet> TimeSheet { get; set; }
 
+        // 14. Equipment TimeSheet
+        public DbSet<EquipmentTimeSheet> EquipmentTimeSheet { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
