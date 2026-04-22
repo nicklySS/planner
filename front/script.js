@@ -2980,7 +2980,7 @@ function buildEquipmentTimesheetTable(equipment, groupedData, startDate) {
         row2 += '<td class="shift-col">2</td>';
         
         // Подсчет итогов
-        let totalWorkDays = 0;
+        let workDays = new Set();  // Множество для уникальных дней работы
         let totalHours = 0;
         
         // Дни месяца
@@ -3009,11 +3009,11 @@ function buildEquipmentTimesheetTable(equipment, groupedData, startDate) {
             
             // Подсчитываем итоги
             if (ts1) {
-                if (ts1.dayType === 'Work') totalWorkDays += 1;
+                if (ts1.dayType === 'Work') workDays.add(day);  // Добавляем день в множество
                 if (ts1.hoursWorked) totalHours += parseFloat(ts1.hoursWorked);
             }
             if (ts2) {
-                if (ts2.dayType === 'Work') totalWorkDays += 1;
+                if (ts2.dayType === 'Work') workDays.add(day);  // Добавляем день в множество
                 if (ts2.hoursWorked) totalHours += parseFloat(ts2.hoursWorked);
             }
             
@@ -3027,7 +3027,7 @@ function buildEquipmentTimesheetTable(equipment, groupedData, startDate) {
         }
         
         // Добавляем итоговые ячейки
-        row1 += `<td class="timesheet-total" rowspan="2">${totalWorkDays}</td>`;
+        row1 += `<td class="timesheet-total" rowspan="2">${workDays.size}</td>`;
         row1 += `<td class="timesheet-total" rowspan="2">${totalHours.toFixed(1)}</td>`;
         
         row1 += '</tr>';
