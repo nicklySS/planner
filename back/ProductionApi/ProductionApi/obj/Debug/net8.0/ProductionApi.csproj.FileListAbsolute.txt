@@ -272,10 +272,10 @@ D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\staticw
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\staticwebassets.development.json
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\swae.build.ex.cache
-D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\Producti.8BFE5217.Up2Date
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\ProductionApi.dll
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\refint\ProductionApi.dll
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\ProductionApi.pdb
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\ProductionApi.genruntimeconfig.cache
 D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\ref\ProductionApi.dll
+D:\PlannerProj\planner\back\ProductionApi\ProductionApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

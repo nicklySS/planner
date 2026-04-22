@@ -20,9 +20,6 @@ namespace ProductionApi.Models
         [Required]
         public bool IsActive { get; set; } = true;
 
-        [MaxLength(50)]
-        public string? EmployeeNumber { get; set; }
-
         /* Навигация */
 
         // Ссылки на ShiftWorkLog, если человек мастер

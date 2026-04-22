@@ -27,6 +27,9 @@ $(document).ready(function() {
     const monthStr = String(today.getMonth() + 1).padStart(2, '0');
     $('#timesheet-month').val(`${today.getFullYear()}-${monthStr}`);
     loadTimeSheet();
+    
+    // Инициализируем учёт материалов
+    initializeInventory();
 });
 
 // Инициализация приложения
@@ -118,6 +121,9 @@ function initializeApp() {
                 const monthStr2 = String(today2.getMonth() + 1).padStart(2, '0');
                 $('#equipment-timesheet-month').val(`${today2.getFullYear()}-${monthStr2}`);
                 loadEquipmentTimeSheet();
+                break;
+            case 'inventory':
+                switchInventoryTab('stocks');
                 break;
         }
     });

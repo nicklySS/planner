@@ -37,7 +37,7 @@ namespace ProductionApi.Migrations
 
                     b.HasKey("DetailID");
 
-                    b.ToTable("Details");
+                    b.ToTable("Details", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.DetailToDetailReconfigurationTime", b =>
@@ -72,7 +72,7 @@ namespace ProductionApi.Migrations
 
                     b.HasIndex("ToDetailID");
 
-                    b.ToTable("DetailToDetailReconfigurationTimes");
+                    b.ToTable("DetailToDetailReconfigurationTimes", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.Equipment", b =>
@@ -99,7 +99,7 @@ namespace ProductionApi.Migrations
 
                     b.HasIndex("WorkPlaceID");
 
-                    b.ToTable("Equipment");
+                    b.ToTable("Equipment", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.Material", b =>
@@ -117,7 +117,7 @@ namespace ProductionApi.Migrations
 
                     b.HasKey("MaterialID");
 
-                    b.ToTable("Materials");
+                    b.ToTable("Materials", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.MaterialMaterialSize", b =>
@@ -132,7 +132,7 @@ namespace ProductionApi.Migrations
 
                     b.HasIndex("MaterialSizeID");
 
-                    b.ToTable("MaterialMaterialSizes");
+                    b.ToTable("MaterialMaterialSizes", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.MaterialSize", b =>
@@ -154,7 +154,7 @@ namespace ProductionApi.Migrations
 
                     b.HasKey("MaterialSizeID");
 
-                    b.ToTable("MaterialSizes");
+                    b.ToTable("MaterialSizes", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.Operation", b =>
@@ -194,7 +194,7 @@ namespace ProductionApi.Migrations
 
                     b.HasIndex("EquipmentID");
 
-                    b.ToTable("Operations");
+                    b.ToTable("Operations", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.Person", b =>
@@ -220,7 +220,7 @@ namespace ProductionApi.Migrations
 
                     b.HasKey("PersonID");
 
-                    b.ToTable("People");
+                    b.ToTable("People", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.ShiftWorkLog", b =>
@@ -253,7 +253,7 @@ namespace ProductionApi.Migrations
 
                     b.HasIndex("PersonID");
 
-                    b.ToTable("ShiftWorkLogs");
+                    b.ToTable("ShiftWorkLogs", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.ShiftWorkLogEquipment", b =>
@@ -268,7 +268,7 @@ namespace ProductionApi.Migrations
 
                     b.HasIndex("EquipmentID");
 
-                    b.ToTable("ShiftWorkLogEquipments");
+                    b.ToTable("ShiftWorkLogEquipments", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.ShiftWorkLogSetupPerson", b =>
@@ -283,7 +283,7 @@ namespace ProductionApi.Migrations
 
                     b.HasIndex("PersonID");
 
-                    b.ToTable("ShiftWorkLogSetupPeople");
+                    b.ToTable("ShiftWorkLogSetupPeople", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.WorkPlace", b =>
@@ -309,7 +309,7 @@ namespace ProductionApi.Migrations
 
                     b.HasKey("WorkPlaceID");
 
-                    b.ToTable("WorkPlaces");
+                    b.ToTable("WorkPlaces", (string)null);
                 });
 
             modelBuilder.Entity("ProductionApi.Models.DetailToDetailReconfigurationTime", b =>

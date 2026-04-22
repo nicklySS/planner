@@ -55,6 +55,12 @@ namespace ProductionApi.Data
         // 14. Equipment TimeSheet
         public DbSet<EquipmentTimeSheet> EquipmentTimeSheet { get; set; }
 
+        // 15. Material Stock (остаток материалов)
+        public DbSet<MaterialStock> MaterialStocks { get; set; }
+
+        // 16. Material Transaction (журнал операций)
+        public DbSet<MaterialTransaction> MaterialTransactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -159,6 +165,36 @@ namespace ProductionApi.Data
                 .HasOne(swl => swl.Master)
                 .WithMany()
                 .HasForeignKey(swl => swl.MasterID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Настройка для MaterialStock
+            modelBuilder.Entity<MaterialStock>()
+                .HasIndex(ms => new { ms.MaterialID, ms.MaterialSizeID })
+                .IsUnique();
+
+            modelBuilder.Entity<MaterialStock>()
+                .HasOne(ms => ms.Material)
+                .WithMany()
+                .HasForeignKey(ms => ms.MaterialID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaterialStock>()
+                .HasOne(ms => ms.MaterialSize)
+                .WithMany()
+                .HasForeignKey(ms => ms.MaterialSizeID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Настройка для MaterialTransaction
+            modelBuilder.Entity<MaterialTransaction>()
+                .HasOne(mt => mt.Material)
+                .WithMany()
+                .HasForeignKey(mt => mt.MaterialID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaterialTransaction>()
+                .HasOne(mt => mt.MaterialSize)
+                .WithMany()
+                .HasForeignKey(mt => mt.MaterialSizeID)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

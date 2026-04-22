@@ -10,6 +10,7 @@
     <!-- Добавляем библиотеки для экспорта -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="inventory-functions.js"></script>
 </head>
 <body>
     <!-- Верхняя панель навигации -->
@@ -92,6 +93,11 @@
             <li class="menu-item">
                 <button class="menu-btn" data-tab="equipment-timesheet">
                     <i class="fas fa-industry"></i> Табель станков
+                </button>
+            </li>
+            <li class="menu-item">
+                <button class="menu-btn" data-tab="inventory">
+                    <i class="fas fa-warehouse"></i> Учёт материалов
                 </button>
             </li>
         </ul>
@@ -531,6 +537,123 @@
                     </div>
                     <div id="timesheet-empty" style="text-align: center; padding: 40px;">
                         <p>Нет данных для отображения. Выберите месяц.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Учёт материалов -->
+            <section id="inventory" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-warehouse"></i> Управление остатками материалов</h2>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="add-receipt-btn">
+                            <i class="fas fa-arrow-down"></i> Приход материала
+                        </button>
+                        <button class="btn btn-warning" id="add-consumption-btn">
+                            <i class="fas fa-arrow-up"></i> Расход материала
+                        </button>
+                        <button class="btn btn-success" id="export-inventory-excel">
+                            <i class="fas fa-file-excel"></i> Отчёт Excel
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="inventory-tabs">
+                    <button class="tab-btn active" data-inv-tab="stocks">
+                        <i class="fas fa-cubes"></i> Остатки материалов
+                    </button>
+                    <button class="tab-btn" data-inv-tab="transactions">
+                        <i class="fas fa-history"></i> История операций
+                    </button>
+                    <button class="tab-btn" data-inv-tab="report">
+                        <i class="fas fa-chart-bar"></i> Отчёт по материалам
+                    </button>
+                </div>
+                
+                <!-- Остатки материалов -->
+                <div class="inventory-tab-content active" id="stocks-tab">
+                    <div class="filters">
+                        <button class="btn btn-secondary" id="refresh-stocks">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="stocks-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Материал</th>
+                                    <th>Размер</th>
+                                    <th>Единица</th>
+                                    <th>Остаток</th>
+                                    <th>Получено</th>
+                                    <th>Использовано</th>
+                                    <th>Последнее обновление</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stocks-table-body">
+                                <!-- Данные будут загружены через JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- История операций -->
+                <div class="inventory-tab-content" id="transactions-tab">
+                    <div class="filters">
+                        <select id="transaction-material-filter" class="filter-input">
+                            <option value="">Все материалы</option>
+                        </select>
+                        <button class="btn btn-secondary" id="refresh-transactions">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Дата</th>
+                                    <th>Материал</th>
+                                    <th>Размер</th>
+                                    <th>Тип операции</th>
+                                    <th>Количество</th>
+                                    <th>Единица</th>
+                                    <th>Номер документа</th>
+                                    <th>Примечание</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-table-body">
+                                <!-- Данные будут загружены через JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Отчёт -->
+                <div class="inventory-tab-content" id="report-tab">
+                    <div class="filters">
+                        <button class="btn btn-secondary" id="refresh-report">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Материал</th>
+                                    <th>Размер</th>
+                                    <th>Единица</th>
+                                    <th>Остаток</th>
+                                    <th>Всего получено</th>
+                                    <th>Всего использовано</th>
+                                    <th>Последнее обновление</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-table-body">
+                                <!-- Данные будут загружены через JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
