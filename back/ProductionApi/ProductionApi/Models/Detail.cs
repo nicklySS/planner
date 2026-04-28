@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace ProductionApi.Models
@@ -13,6 +14,21 @@ namespace ProductionApi.Models
         [MaxLength(150)]
         public string DetailName { get; set; } = null!;
 
+        [MaxLength(50)]
+        public string? DetailShortCode { get; set; }
+
+        [Column(TypeName = "decimal(18, 4)")]
+        public decimal? ConsumptionRate { get; set; }
+
+        [MaxLength(50)]
+        public string? DetailCode { get; set; }
+
+        public int? MainMaterial { get; set; }
+
+        /* Навигация */
+
+        [ForeignKey(nameof(MainMaterial))]
+        public Material? Material { get; set; }
 
         // Производственные операции с этой деталью
         [JsonIgnore]

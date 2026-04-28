@@ -16,6 +16,20 @@ namespace ProductionApi.Controllers
             _context = context;
         }
 
+        // DTO for creating/updating materials with sizes
+        public class MaterialDto
+        {
+            public int MaterialID { get; set; }
+            public string MaterialName { get; set; } = null!;
+            public List<MaterialSizeDto>? MaterialMaterialSizes { get; set; }
+        }
+
+        public class MaterialSizeDto
+        {
+            public int MaterialID { get; set; }
+            public int MaterialSizeID { get; set; }
+        }
+
         // GET: api/Materials
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Material>>> GetMaterials()
@@ -45,24 +59,78 @@ namespace ProductionApi.Controllers
 
         // POST: api/Materials
         [HttpPost]
-        public async Task<ActionResult<Material>> CreateMaterial(Material material)
+        public async Task<ActionResult<Material>> CreateMaterial(MaterialDto materialDto)
         {
+            var material = new Material
+            {
+                MaterialName = materialDto.MaterialName,
+                MaterialMaterialSizes = new List<MaterialMaterialSize>()
+            };
+
             _context.Materials.Add(material);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMaterial), new { id = material.MaterialID }, material);
+            // Add material sizes if provided
+            if (materialDto.MaterialMaterialSizes != null && materialDto.MaterialMaterialSizes.Count > 0)
+            {
+                foreach (var sizeDto in materialDto.MaterialMaterialSizes)
+                {
+                    var materialSize = new MaterialMaterialSize
+                    {
+                        MaterialID = material.MaterialID,
+                        MaterialSizeID = sizeDto.MaterialSizeID
+                    };
+                    _context.MaterialMaterialSizes.Add(materialSize);
+                }
+                await _context.SaveChangesAsync();
+            }
+
+            // Reload material with sizes
+            var createdMaterial = await _context.Materials
+                .Include(m => m.MaterialMaterialSizes)
+                    .ThenInclude(mms => mms.MaterialSize)
+                .FirstOrDefaultAsync(m => m.MaterialID == material.MaterialID);
+
+            return CreatedAtAction(nameof(GetMaterial), new { id = material.MaterialID }, createdMaterial);
         }
 
         // PUT: api/Materials/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMaterial(int id, Material material)
+        public async Task<IActionResult> UpdateMaterial(int id, MaterialDto materialDto)
         {
-            if (id != material.MaterialID)
+            if (id != materialDto.MaterialID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(material).State = EntityState.Modified;
+            var material = await _context.Materials
+                .Include(m => m.MaterialMaterialSizes)
+                .FirstOrDefaultAsync(m => m.MaterialID == id);
+
+            if (material == null)
+            {
+                return NotFound();
+            }
+
+            material.MaterialName = materialDto.MaterialName;
+
+            // Update material sizes
+            // Remove old sizes
+            _context.MaterialMaterialSizes.RemoveRange(material.MaterialMaterialSizes!);
+
+            // Add new sizes
+            if (materialDto.MaterialMaterialSizes != null && materialDto.MaterialMaterialSizes.Count > 0)
+            {
+                foreach (var sizeDto in materialDto.MaterialMaterialSizes)
+                {
+                    var materialSize = new MaterialMaterialSize
+                    {
+                        MaterialID = id,
+                        MaterialSizeID = sizeDto.MaterialSizeID
+                    };
+                    _context.MaterialMaterialSizes.Add(materialSize);
+                }
+            }
 
             try
             {

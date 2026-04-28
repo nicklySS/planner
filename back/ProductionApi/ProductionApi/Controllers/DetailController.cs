@@ -21,28 +21,21 @@ namespace ProductionApi.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GetDetails()
         {
             return await _context.Details
+                .Include(d => d.Material)
                 .Select(d => new
                 {
                     d.DetailID,
                     d.DetailName,
+                    d.DetailShortCode,
+                    d.ConsumptionRate,
+                    d.DetailCode,
+                    d.MainMaterial,
+                    MainMaterialName = d.Material != null ? d.Material.MaterialName : null,
                     OperationsCount = d.Operations != null ? d.Operations.Count : 0,
                     FromReconfigurationsCount = d.FromReconfigurations != null ? d.FromReconfigurations.Count : 0,
                     ToReconfigurationsCount = d.ToReconfigurations != null ? d.ToReconfigurations.Count : 0
                 })
                 .ToListAsync();
-
-            //return await _context.Details
-            //    .Select(d => new
-            //    {
-            //        d.DetailID,
-            //        d.DetailName,
-            //        OperationsCount = d.Operations != null ? d.Operations.Count : 0,
-            //        FromReconfigurationsCount = d.FromReconfigurations != null ? d.FromReconfigurations.Count : 0,
-            //        ToReconfigurationsCount = d.ToReconfigurations != null ? d.ToReconfigurations.Count : 0
-            //    })
-            //    .ToListAsync();
-
-
         }
 
         // GET: api/Detail/5
@@ -50,6 +43,7 @@ namespace ProductionApi.Controllers
         public async Task<ActionResult<object>> GetDetail(int id)
         {
             var detail = await _context.Details
+                .Include(d => d.Material)
                 .FirstOrDefaultAsync(d => d.DetailID == id);
 
             if (detail == null)
@@ -60,7 +54,12 @@ namespace ProductionApi.Controllers
             return new
             {
                 detail.DetailID,
-                detail.DetailName
+                detail.DetailName,
+                detail.DetailShortCode,
+                detail.ConsumptionRate,
+                detail.DetailCode,
+                detail.MainMaterial,
+                MainMaterialName = detail.Material != null ? detail.Material.MaterialName : null
             };
         }
 

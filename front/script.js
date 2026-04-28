@@ -926,7 +926,7 @@ function renderDetailsTable(details) {
     if (!details || details.length === 0) {
         tbody.html(`
             <tr>
-                <td colspan="6" class="empty-state">
+                <td colspan="7" class="empty-state">
                     <i class="fas fa-cogs"></i>
                     <p>Нет данных о деталях</p>
                 </td>
@@ -938,10 +938,11 @@ function renderDetailsTable(details) {
     const rows = details.map(detail => `
         <tr>
             <td>${detail.detailID}</td>
-            <td><strong>${detail.detailName}</strong></td>
+            <td><strong>${detail.detailName}</strong>${detail.detailShortCode ? ` (${detail.detailShortCode})` : ''}</td>
+            <td>${detail.detailCode || '-'}</td>
+            <td>${detail.mainMaterialName || '-'}</td>
+            <td>${detail.consumptionRate || '-'}</td>
             <td>${detail.operationsCount || 0}</td>
-            <td>${detail.fromReconfigurationsCount || 0}</td>
-            <td>${detail.toReconfigurationsCount || 0}</td>
             <td class="actions">
                 <button class="btn-icon btn-view" onclick="viewDetail(${detail.detailID})">
                     <i class="fas fa-eye"></i>
@@ -963,6 +964,11 @@ function showDetailModal(detail = null) {
     const isEdit = detail !== null;
     const title = isEdit ? 'Редактировать деталь' : 'Добавить деталь';
     
+    // Prepare materials dropdown options
+    const materialsOptions = cachedData.materials.map(m => 
+        `<option value="${m.materialID}" ${detail?.mainMaterial === m.materialID ? 'selected' : ''}>${m.materialName}</option>`
+    ).join('');
+    
     const content = `
         <form id="detail-form">
             <input type="hidden" id="detail-id" value="${detail?.detailID || ''}">
@@ -971,6 +977,32 @@ function showDetailModal(detail = null) {
                 <label for="detail-name">Название детали *</label>
                 <input type="text" id="detail-name" class="form-control" 
                        value="${detail?.detailName || ''}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="detail-short-code">Краткий код</label>
+                <input type="text" id="detail-short-code" class="form-control" 
+                       value="${detail?.detailShortCode || ''}" maxlength="50">
+            </div>
+
+            <div class="form-group">
+                <label for="consumption-rate">Норма потребления</label>
+                <input type="number" id="consumption-rate" class="form-control" 
+                       value="${detail?.consumptionRate || ''}" step="0.0001">
+            </div>
+
+            <div class="form-group">
+                <label for="detail-code">Код детали</label>
+                <input type="text" id="detail-code" class="form-control" 
+                       value="${detail?.detailCode || ''}" maxlength="50">
+            </div>
+
+            <div class="form-group">
+                <label for="main-material">Основной материал</label>
+                <select id="main-material" class="form-control">
+                    <option value="">-- Не выбран --</option>
+                    ${materialsOptions}
+                </select>
             </div>
             
             <div class="form-actions">
@@ -991,7 +1023,11 @@ function showDetailModal(detail = null) {
         
         const detailData = {
             detailID: $('#detail-id').val() || 0,
-            detailName: $('#detail-name').val()
+            detailName: $('#detail-name').val(),
+            detailShortCode: $('#detail-short-code').val() || null,
+            consumptionRate: $('#consumption-rate').val() ? parseFloat($('#consumption-rate').val()) : null,
+            detailCode: $('#detail-code').val() || null,
+            mainMaterial: $('#main-material').val() ? parseInt($('#main-material').val()) : null
         };
         
         try {
@@ -1945,6 +1981,18 @@ function showMaterialModal(material = null) {
     const isEdit = material !== null;
     const title = isEdit ? 'Редактировать материал' : 'Добавить материал';
     
+    // Prepare sizes checkboxes
+    const selectedSizeIDs = material?.materialMaterialSizes?.map(mms => mms.materialSizeID) || [];
+    const sizesHtml = cachedData.materialSizes.map(size => `
+        <div class="checkbox-item">
+            <input type="checkbox" id="size-${size.materialSizeID}" name="sizes" value="${size.materialSizeID}" 
+                   ${selectedSizeIDs.includes(size.materialSizeID) ? 'checked' : ''}>
+            <label for="size-${size.materialSizeID}">
+                ${size.sizeValue} ${size.unit}
+            </label>
+        </div>
+    `).join('');
+    
     const content = `
         <form id="material-form">
             <input type="hidden" id="material-id" value="${material?.materialID || ''}">
@@ -1953,6 +2001,13 @@ function showMaterialModal(material = null) {
                 <label for="material-name">Название материала *</label>
                 <input type="text" id="material-name" class="form-control" 
                        value="${material?.materialName || ''}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Размеры</label>
+                <div class="sizes-container" style="border: 1px solid #ddd; padding: 10px; border-radius: 4px; max-height: 200px; overflow-y: auto;">
+                    ${sizesHtml || '<p style="color: #999; margin: 0;">Размеры не добавлены. Сначала создайте размеры.</p>'}
+                </div>
             </div>
             
             <div class="form-actions">
@@ -1971,9 +2026,17 @@ function showMaterialModal(material = null) {
     $('#material-form').submit(async function(e) {
         e.preventDefault();
         
+        const selectedSizes = $('input[name="sizes"]:checked').map(function() {
+            return parseInt($(this).val());
+        }).get();
+        
         const materialData = {
             materialID: $('#material-id').val() || 0,
-            materialName: $('#material-name').val()
+            materialName: $('#material-name').val(),
+            materialMaterialSizes: selectedSizes.map(sizeID => ({
+                materialID: parseInt($('#material-id').val()) || 0,
+                materialSizeID: sizeID
+            }))
         };
         
         try {
@@ -1989,6 +2052,7 @@ function showMaterialModal(material = null) {
             loadMaterials();
         } catch (error) {
             showNotification('Ошибка при сохранении материала', 'error');
+            console.error(error);
         }
     });
 }

@@ -149,6 +149,13 @@ namespace ProductionApi.Data
                 .WithMany(d => d.Operations)
                 .HasForeignKey(o => o.DetailID);
 
+            // Настройка для Detail
+            modelBuilder.Entity<Detail>()
+                .HasOne(d => d.Material)
+                .WithMany(m => m.Details)
+                .HasForeignKey(d => d.MainMaterial)
+                .OnDelete(DeleteBehavior.SetNull);
+
             // Настройка для MaterialSize (решаем предупреждение о decimal)
             modelBuilder.Entity<MaterialSize>()
                 .Property(ms => ms.SizeValue)

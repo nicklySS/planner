@@ -1376,17 +1376,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Material"
+                "$ref": "#/components/schemas/MaterialDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Material"
+                "$ref": "#/components/schemas/MaterialDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Material"
+                "$ref": "#/components/schemas/MaterialDto"
               }
             }
           }
@@ -1473,17 +1473,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Material"
+                "$ref": "#/components/schemas/MaterialDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Material"
+                "$ref": "#/components/schemas/MaterialDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Material"
+                "$ref": "#/components/schemas/MaterialDto"
               }
             }
           }
@@ -3062,6 +3062,29 @@
             "maxLength": 150,
             "minLength": 1,
             "type": "string"
+          },
+          "detailShortCode": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "consumptionRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "detailCode": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "mainMaterial": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "material": {
+            "$ref": "#/components/schemas/Material"
           }
         },
         "additionalProperties": false
@@ -3245,6 +3268,27 @@
         },
         "additionalProperties": false
       },
+      "MaterialDto": {
+        "type": "object",
+        "properties": {
+          "materialID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "materialName": {
+            "type": "string",
+            "nullable": true
+          },
+          "materialMaterialSizes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MaterialSizeDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MaterialMaterialSize": {
         "type": "object",
         "properties": {
@@ -3318,6 +3362,20 @@
               "$ref": "#/components/schemas/MaterialMaterialSize"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MaterialSizeDto": {
+        "type": "object",
+        "properties": {
+          "materialID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "materialSizeID": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

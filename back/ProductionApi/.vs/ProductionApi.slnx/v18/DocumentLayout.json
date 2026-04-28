@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\PlannerProj\\planner\\back\\ProductionApi\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\equipmenttimesheetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\equipmenttimesheetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -37,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\data\\productiondbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -152,11 +152,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "EquipmentTimeSheetController.cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\EquipmentTimeSheetController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\EquipmentTimeSheetController.cs",
@@ -169,19 +169,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\appsettings.json",
-              "RelativeDocumentMoniker": "ProductionApi\\appsettings.json",
-              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\appsettings.json",
-              "RelativeToolTip": "ProductionApi\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-01-04T17:39:15.266Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "DetailController.cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\DetailController.cs",
@@ -193,7 +181,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "MaterialMaterialSizesController .cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\MaterialMaterialSizesController .cs",
@@ -205,7 +193,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "MaterialSizesController.cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\MaterialSizesController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\MaterialSizesController.cs",
@@ -217,7 +205,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Program.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
+              "RelativeToolTip": "ProductionApi\\Program.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAswCoAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-04T17:37:57.53Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\appsettings.json",
+              "RelativeDocumentMoniker": "ProductionApi\\appsettings.json",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\appsettings.json",
+              "RelativeToolTip": "ProductionApi\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-04T17:39:15.266Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Person.cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Person.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\Person.cs",
@@ -229,7 +242,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "PeopleController.cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\PeopleController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\PeopleController.cs",
@@ -241,7 +254,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "DetailToDetailReconfigurationTimeController.cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Controllers\\DetailToDetailReconfigurationTimeController.cs",
@@ -253,7 +266,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Detail.cs",
               "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Models\\Detail.cs",
               "RelativeDocumentMoniker": "ProductionApi\\Models\\Detail.cs",
@@ -274,18 +287,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-04T18:10:05.13Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
-              "RelativeDocumentMoniker": "ProductionApi\\Program.cs",
-              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
-              "RelativeToolTip": "ProductionApi\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-04T17:37:57.53Z"
             },
             {
               "$type": "Document",

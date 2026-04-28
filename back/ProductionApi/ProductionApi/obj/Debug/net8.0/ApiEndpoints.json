@@ -811,8 +811,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "material",
-        "Type": "ProductionApi.Models.Material",
+        "Name": "materialDto",
+        "Type": "ProductionApi.Controllers.MaterialsController\u002BMaterialDto",
         "IsRequired": true
       }
     ],
@@ -868,8 +868,8 @@
         "IsRequired": true
       },
       {
-        "Name": "material",
-        "Type": "ProductionApi.Models.Material",
+        "Name": "materialDto",
+        "Type": "ProductionApi.Controllers.MaterialsController\u002BMaterialDto",
         "IsRequired": true
       }
     ],
