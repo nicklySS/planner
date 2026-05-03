@@ -12,7 +12,8 @@ let cachedData = {
     operations: [],
     materials: [],
     materialSizes: [],
-    people: []
+    people: [],
+    reconfigurations: []
 };
 
 // Инициализация при загрузке страницы
@@ -56,6 +57,7 @@ function initializeApp() {
     $('#add-material-btn').click(() => showMaterialModal());
     $('#add-material-size-btn').click(() => showMaterialSizeModal());
     $('#add-person-btn').click(() => showPersonModal());
+    $('#add-reconfiguration-btn').click(() => showReconfigurationModal());
     
     // Кнопки обновления
     $('#refresh-details').click(() => loadDetails());
@@ -107,6 +109,9 @@ function initializeApp() {
                 break;
             case 'people':
                 loadPeople();
+                break;
+            case 'reconfigurations':
+                loadReconfigurations();
                 break;
             case 'timesheet':
                 // Установить текущий месяц по умолчанию
@@ -1051,14 +1056,201 @@ function showDetailModal(detail = null) {
 async function viewDetail(id) {
     try {
         const detail = await apiRequest('GET', `Detail/${id}`);
-        showDetailModal(detail);
+        const operations = await apiRequest('GET', `DetailOperations?detailID=${id}`);
+        showDetailOperationsPanel(detail, operations || []);
     } catch (error) {
         showNotification('Не удалось загрузить деталь', 'error');
     }
 }
 
+function showDetailOperationsPanel(detail, operations) {
+    // Create a panel/modal for detail operations
+    // Сортируем операции по №п/п
+    const sortedOperations = operations.sort((a, b) => {
+        const seqA = a.sequenceNumber || Number.MAX_VALUE;
+        const seqB = b.sequenceNumber || Number.MAX_VALUE;
+        return seqA - seqB;
+    });
+
+    const operationsHtml = sortedOperations.map(op => `
+        <tr>
+            <td>${op.detailOperationID}</td>
+            <td>${op.sequenceNumber || '-'}</td>
+            <td>${op.operationCode || '-'}</td>
+            <td>${op.operationType || '-'}</td>
+            <td>${op.equipment?.equipmentName || '-'}</td>
+            <td>${op.reconfigurationTime || '-'}</td>
+            <td>${op.setupPercentage || '-'}%</td>
+            <td class="actions">
+                <button class="btn-icon btn-edit" onclick="editDetailOperation(${detail.detailID}, ${op.detailOperationID})">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon btn-delete" onclick="deleteDetailOperation(${detail.detailID}, ${op.detailOperationID})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
+    const content = `
+        <div class="detail-operations-panel">
+            <div class="panel-header">
+                <h3>Операции для детали: <strong>${detail.detailName}</strong></h3>
+                <button class="btn btn-primary btn-sm" onclick="showDetailOperationModal(${detail.detailID})">
+                    <i class="fas fa-plus"></i> Добавить операцию
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>№ п/п</th>
+                            <th>Код</th>
+                            <th>Наименование</th>
+                            <th>Станок</th>
+                            <th>Время переналадки (мин)</th>
+                            <th>% на наладку</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${operationsHtml || '<tr><td colspan="8" class="empty-state">Нет операций для этой детали</td></tr>'}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    showModal(`Операции детали: ${detail.detailName}`, content);
+    // Store current detail for operations
+    window.currentDetailID = detail.detailID;
+}
+
+async function editDetailOperation(detailID, detailOperationID) {
+    try {
+        const operation = await apiRequest('GET', `DetailOperations/${detailOperationID}`);
+        showDetailOperationModal(detailID, operation);
+    } catch (error) {
+        showNotification('Не удалось загрузить операцию', 'error');
+    }
+}
+
+function showDetailOperationModal(detailID, operation = null) {
+    const isEdit = operation !== null;
+    const title = isEdit ? 'Редактировать операцию' : 'Добавить операцию для детали';
+
+    const equipmentOptions = cachedData.equipment.map(e => 
+        `<option value="${e.equipmentID}" ${operation?.equipmentID === e.equipmentID ? 'selected' : ''}>${e.equipmentName}</option>`
+    ).join('');
+
+    const content = `
+        <form id="detail-operation-form">
+            <input type="hidden" id="detail-operation-id" value="${operation?.detailOperationID || ''}">
+            
+            <div class="form-group">
+                <label for="op-code">Код операции</label>
+                <input type="text" id="op-code" class="form-control" maxlength="50"
+                       value="${operation?.operationCode || ''}">
+            </div>
+
+            <div class="form-group">
+                <label for="op-type">Наименование операции</label>
+                <input type="text" id="op-type" class="form-control" maxlength="50"
+                       value="${operation?.operationType || ''}">
+            </div>
+
+            <div class="form-group">
+                <label for="op-equipment">Станок *</label>
+                <select id="op-equipment" class="form-control" required>
+                    <option value="">-- Выберите станок --</option>
+                    ${equipmentOptions}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="op-sequence">№ п/п выполнения</label>
+                <input type="number" id="op-sequence" class="form-control" min="1"
+                       value="${operation?.sequenceNumber || ''}">
+            </div>
+
+            <div class="form-group">
+                <label for="op-reconfig-time">Время переналадки (минуты)</label>
+                <input type="number" id="op-reconfig-time" class="form-control" min="0"
+                       value="${operation?.reconfigurationTime || ''}">
+            </div>
+
+            <div class="form-group">
+                <label for="op-setup-percent">% на наладку</label>
+                <input type="number" id="op-setup-percent" class="form-control" min="0" step="0.01"
+                       value="${operation?.setupPercentage || ''}">
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    Отмена
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    ${isEdit ? 'Сохранить' : 'Создать'}
+                </button>
+            </div>
+        </form>
+    `;
+
+    showModal(title, content);
+
+    $('#detail-operation-form').submit(async function(e) {
+        e.preventDefault();
+
+        const detailOperationData = {
+            detailOperationID: $('#detail-operation-id').val() ? parseInt($('#detail-operation-id').val()) : 0,
+            detailID: detailID,
+            equipmentID: parseInt($('#op-equipment').val()),
+            operationCode: $('#op-code').val() || null,
+            operationType: $('#op-type').val() || null,
+            sequenceNumber: $('#op-sequence').val() ? parseInt($('#op-sequence').val()) : null,
+            reconfigurationTime: $('#op-reconfig-time').val() ? parseInt($('#op-reconfig-time').val()) : null,
+            setupPercentage: $('#op-setup-percent').val() ? parseFloat($('#op-setup-percent').val()) : null
+        };
+
+        try {
+            if (isEdit) {
+                await apiRequest('PUT', `DetailOperations/${detailOperationData.detailOperationID}`, detailOperationData);
+                showNotification('Операция успешно обновлена', 'success');
+            } else {
+                await apiRequest('POST', 'DetailOperations', detailOperationData);
+                showNotification('Операция успешно создана', 'success');
+            }
+
+            closeModal();
+            viewDetail(detailID);
+        } catch (error) {
+            showNotification('Ошибка при сохранении операции', 'error');
+            console.error(error);
+        }
+    });
+}
+
+async function deleteDetailOperation(detailID, detailOperationID) {
+    if (!confirm('Вы уверены, что хотите удалить эту операцию?')) return;
+
+    try {
+        await apiRequest('DELETE', `DetailOperations/${detailOperationID}`);
+        showNotification('Операция успешно удалена', 'success');
+        viewDetail(detailID);
+    } catch (error) {
+        showNotification('Ошибка при удалении операции', 'error');
+    }
+}
+
 async function editDetail(id) {
-    await viewDetail(id);
+    try {
+        const detail = await apiRequest('GET', `Detail/${id}`);
+        showDetailModal(detail);
+    } catch (error) {
+        showNotification('Не удалось загрузить деталь', 'error');
+    }
 }
 
 async function deleteDetail(id) {
@@ -1738,6 +1930,8 @@ function renderOperationsTable(operations) {
     const rows = operations.map(op => `
         <tr>
             <td>${op.operationID}</td>
+            <td>${op.operationCode || '-'}</td>
+            <td>${op.operationType || '-'}</td>
             <td>${op.equipment?.equipmentName || op.equipmentID}</td>
             <td>${op.detail?.detailName || op.detailID}</td>
             <td>${op.plannedQuantity}</td>
@@ -1750,8 +1944,6 @@ function renderOperationsTable(operations) {
                       op.status === 'Completed' ? 'Завершено' : 'Отменено'}
                 </span>
             </td>
-            <td>${op.startTime ? new Date(op.startTime).toLocaleString('ru-RU') : '-'}</td>
-            <td>${op.endTime ? new Date(op.endTime).toLocaleString('ru-RU') : '-'}</td>
             <td class="actions">
                 <button class="btn-icon btn-edit" onclick="editOperation(${op.operationID})">
                     <i class="fas fa-edit"></i>
@@ -1808,6 +2000,20 @@ function showOperationModal(operation = null) {
                         </select>
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="operation-code">Код операции</label>
+                        <input type="text" id="operation-code" class="form-control" maxlength="50"
+                               value="${operation?.operationCode || ''}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="operation-type">Наименование операции</label>
+                        <input type="text" id="operation-type" class="form-control" maxlength="50"
+                               value="${operation?.operationType || ''}">
+                    </div>
+                </div>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -1822,29 +2028,37 @@ function showOperationModal(operation = null) {
                                value="${operation?.completedQuantity || 0}" min="0">
                     </div>
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="start-time">Время начала</label>
-                        <input type="datetime-local" id="start-time" class="form-control" 
-                               value="${operation?.startTime ? new Date(operation.startTime).toISOString().slice(0, 16) : ''}">
+                        <label for="reconfiguration-time">Время переналадки (мин)</label>
+                        <input type="number" id="reconfiguration-time" class="form-control" min="0"
+                               value="${operation?.reconfigurationTime || ''}">
                     </div>
                     
                     <div class="form-group">
-                        <label for="end-time">Время окончания</label>
-                        <input type="datetime-local" id="end-time" class="form-control" 
-                               value="${operation?.endTime ? new Date(operation.endTime).toISOString().slice(0, 16) : ''}">
+                        <label for="sequence-number">№ п/п выполнения</label>
+                        <input type="number" id="sequence-number" class="form-control" min="1"
+                               value="${operation?.sequenceNumber || ''}">
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="status">Статус *</label>
-                    <select id="status" class="form-control" required>
-                        <option value="Planned" ${operation?.status === 'Planned' ? 'selected' : ''}>Запланировано</option>
-                        <option value="InProgress" ${operation?.status === 'InProgress' ? 'selected' : ''}>В процессе</option>
-                        <option value="Completed" ${operation?.status === 'Completed' ? 'selected' : ''}>Завершено</option>
-                        <option value="Cancelled" ${operation?.status === 'Cancelled' ? 'selected' : ''}>Отменено</option>
-                    </select>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="setup-percentage">% на наладку</label>
+                        <input type="number" id="setup-percentage" class="form-control" min="0" step="0.01"
+                               value="${operation?.setupPercentage || ''}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status">Статус *</label>
+                        <select id="status" class="form-control" required>
+                            <option value="Planned" ${operation?.status === 'Planned' ? 'selected' : ''}>Запланировано</option>
+                            <option value="InProgress" ${operation?.status === 'InProgress' ? 'selected' : ''}>В процессе</option>
+                            <option value="Completed" ${operation?.status === 'Completed' ? 'selected' : ''}>Завершено</option>
+                            <option value="Cancelled" ${operation?.status === 'Cancelled' ? 'selected' : ''}>Отменено</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-actions">
@@ -1867,10 +2081,13 @@ function showOperationModal(operation = null) {
                 operationID: $('#operation-id').val() || 0,
                 equipmentID: parseInt($('#equipment-id').val()),
                 detailID: parseInt($('#detail-id').val()),
+                operationCode: $('#operation-code').val() || null,
+                operationType: $('#operation-type').val() || null,
                 plannedQuantity: parseInt($('#planned-quantity').val()),
                 completedQuantity: parseInt($('#completed-quantity').val()),
-                startTime: $('#start-time').val() || null,
-                endTime: $('#end-time').val() || null,
+                reconfigurationTime: $('#reconfiguration-time').val() ? parseInt($('#reconfiguration-time').val()) : null,
+                sequenceNumber: $('#sequence-number').val() ? parseInt($('#sequence-number').val()) : null,
+                setupPercentage: $('#setup-percentage').val() ? parseFloat($('#setup-percentage').val()) : null,
                 status: $('#status').val()
             };
             
@@ -2374,6 +2591,178 @@ async function deletePerson(id) {
     }
 }
 
+// Переналадки
+async function loadReconfigurations() {
+    try {
+        const reconfigurations = await apiRequest('GET', 'DetailToDetailReconfigurationTime');
+        cachedData.reconfigurations = reconfigurations || [];
+        renderReconfigurationsTable(reconfigurations);
+    } catch (error) {
+        $('#reconfigurations-table-body').html(`
+            <tr>
+                <td colspan="7" class="empty-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Не удалось загрузить данные</p>
+                </td>
+            </tr>
+        `);
+        cachedData.reconfigurations = [];
+    }
+}
+
+function renderReconfigurationsTable(reconfigurations) {
+    const tbody = $('#reconfigurations-table-body');
+    
+    if (!reconfigurations || reconfigurations.length === 0) {
+        tbody.html(`
+            <tr>
+                <td colspan="7" class="empty-state">
+                    <i class="fas fa-arrows-alt"></i>
+                    <p>Нет данных о переналадках</p>
+                </td>
+            </tr>
+        `);
+        return;
+    }
+    
+    const rows = reconfigurations.map(reconfiguration => `
+        <tr>
+            <td>${reconfiguration.reconfigurationID}</td>
+            <td>${reconfiguration.equipment?.equipmentName || '-'}</td>
+            <td>${reconfiguration.fromDetail?.detailName || '-'}</td>
+            <td>${reconfiguration.toDetail?.detailName || '-'}</td>
+            <td>${reconfiguration.reconfigurationMinutes || 0}</td>
+            <td>${reconfiguration.notes || '-'}</td>
+            <td class="actions">
+                <button class="btn-icon btn-edit" onclick="editReconfiguration(${reconfiguration.reconfigurationID})">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon btn-delete" onclick="deleteReconfiguration(${reconfiguration.reconfigurationID})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+    
+    tbody.html(rows);
+}
+
+function showReconfigurationModal(reconfiguration = null) {
+    const isEdit = reconfiguration !== null;
+    const title = isEdit ? 'Редактировать переналадку' : 'Добавить переналадку';
+    
+    // Prepare dropdowns
+    const equipmentOptions = cachedData.equipment.map(e => 
+        `<option value="${e.equipmentID}" ${reconfiguration?.equipmentID === e.equipmentID ? 'selected' : ''}>${e.equipmentName}</option>`
+    ).join('');
+    
+    const detailsOptions = cachedData.details.map(d => 
+        `<option value="${d.detailID}">${d.detailName}</option>`
+    ).join('');
+    
+    const content = `
+        <form id="reconfiguration-form">
+            <input type="hidden" id="reconfiguration-id" value="${reconfiguration?.reconfigurationID || ''}">
+            
+            <div class="form-group">
+                <label for="equipment-id">Оборудование *</label>
+                <select id="equipment-id" class="form-control" required>
+                    <option value="">-- Выберите оборудование --</option>
+                    ${equipmentOptions}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="from-detail-id">С детали *</label>
+                <select id="from-detail-id" class="form-control" required>
+                    <option value="">-- Выберите деталь --</option>
+                    ${detailsOptions}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="to-detail-id">На деталь *</label>
+                <select id="to-detail-id" class="form-control" required>
+                    <option value="">-- Выберите деталь --</option>
+                    ${detailsOptions}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="reconfiguration-minutes">Время переналадки (минуты) *</label>
+                <input type="number" id="reconfiguration-minutes" class="form-control" 
+                       value="${reconfiguration?.reconfigurationMinutes || ''}" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Примечания</label>
+                <textarea id="notes" class="form-control" maxlength="300" rows="3">${reconfiguration?.notes || ''}</textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    Отмена
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    ${isEdit ? 'Сохранить' : 'Создать'}
+                </button>
+            </div>
+        </form>
+    `;
+    
+    showModal(title, content);
+    
+    $('#reconfiguration-form').submit(async function(e) {
+        e.preventDefault();
+        
+        const reconfigurationData = {
+            reconfigurationID: $('#reconfiguration-id').val() || 0,
+            equipmentID: parseInt($('#equipment-id').val()),
+            fromDetailID: parseInt($('#from-detail-id').val()),
+            toDetailID: parseInt($('#to-detail-id').val()),
+            reconfigurationMinutes: parseInt($('#reconfiguration-minutes').val()),
+            notes: $('#notes').val() || null
+        };
+        
+        try {
+            if (isEdit) {
+                await apiRequest('PUT', `DetailToDetailReconfigurationTime/${reconfigurationData.reconfigurationID}`, reconfigurationData);
+                showNotification('Переналадка успешно обновлена', 'success');
+            } else {
+                await apiRequest('POST', 'DetailToDetailReconfigurationTime', reconfigurationData);
+                showNotification('Переналадка успешно создана', 'success');
+            }
+            
+            closeModal();
+            loadReconfigurations();
+        } catch (error) {
+            showNotification('Ошибка при сохранении переналадки', 'error');
+            console.error(error);
+        }
+    });
+}
+
+async function editReconfiguration(id) {
+    try {
+        const reconfiguration = await apiRequest('GET', `DetailToDetailReconfigurationTime/${id}`);
+        showReconfigurationModal(reconfiguration);
+    } catch (error) {
+        showNotification('Не удалось загрузить переналадку', 'error');
+    }
+}
+
+async function deleteReconfiguration(id) {
+    if (!confirm('Вы уверены, что хотите удалить эту переналадку?')) return;
+    
+    try {
+        await apiRequest('DELETE', `DetailToDetailReconfigurationTime/${id}`);
+        showNotification('Переналадка успешно удалена', 'success');
+        loadReconfigurations();
+    } catch (error) {
+        showNotification('Ошибка при удалении переналадки', 'error');
+    }
+}
+
 // Экспорт функций для использования в HTML
 window.viewDetail = viewDetail;
 window.editDetail = editDetail;
@@ -2413,6 +2802,11 @@ window.editMaterialSize = editMaterialSize;
 window.deleteMaterialSize = deleteMaterialSize;
 window.editPerson = editPerson;
 window.deletePerson = deletePerson;
+window.editReconfiguration = editReconfiguration;
+window.deleteReconfiguration = deleteReconfiguration;
+window.showDetailOperationModal = showDetailOperationModal;
+window.editDetailOperation = editDetailOperation;
+window.deleteDetailOperation = deleteDetailOperation;
 window.closeModal = closeModal;
 
 // ========================================

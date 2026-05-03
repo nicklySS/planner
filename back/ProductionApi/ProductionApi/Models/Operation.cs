@@ -38,5 +38,19 @@ namespace ProductionApi.Models
         [Required]
         [MaxLength(30)]
         public string Status { get; set; } = "Planned"; // Planned, InProgress, Completed и т.д.
+
+        [MaxLength(50)]
+        public string? OperationCode { get; set; }
+
+        [MaxLength(50)]
+        public string? OperationType { get; set; }
+
+        [Range(0, int.MaxValue)]
+        public int? ReconfigurationTime { get; set; } // Время на переналадку в минутах
+
+        public int? SequenceNumber { get; set; } // Номер в порядке выполнения
+
+        [Column(TypeName = "decimal(5, 2)")]
+        public decimal? SetupPercentage { get; set; } // Процент на наладку
     }
 }

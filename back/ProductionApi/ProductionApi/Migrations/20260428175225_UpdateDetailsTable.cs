@@ -11,12 +11,6 @@ namespace ProductionApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<decimal>(
-                name: "ConsumptionRate",
-                table: "Details",
-                type: "decimal(18,4)",
-                nullable: true);
-
             migrationBuilder.AddColumn<string>(
                 name: "DetailCode",
                 table: "Details",
@@ -213,10 +207,6 @@ namespace ProductionApi.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_Details_MainMaterial",
-                table: "Details");
-
-            migrationBuilder.DropColumn(
-                name: "ConsumptionRate",
                 table: "Details");
 
             migrationBuilder.DropColumn(

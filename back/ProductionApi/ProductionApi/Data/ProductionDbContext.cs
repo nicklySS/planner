@@ -40,6 +40,9 @@ namespace ProductionApi.Data
         // 9. Operations
         public DbSet<Operation> Operations { get; set; }
 
+        // 9a. Detail Operations (отдельные операции для каждой детали)
+        public DbSet<DetailOperation> DetailOperations { get; set; }
+
         // 10. Shift Work Log
         public DbSet<ShiftWorkLog> ShiftWorkLogs { get; set; }
 

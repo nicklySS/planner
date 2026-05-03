@@ -34,6 +34,10 @@ namespace ProductionApi.Models
         [JsonIgnore]
         public ICollection<Operation>? Operations { get; set; }
 
+        // Отдельные операции для этой детали
+        [JsonIgnore]
+        public ICollection<DetailOperation>? DetailOperations { get; set; }
+
         // Переналадки: как FromDetail
         [JsonIgnore]
         public ICollection<DetailToDetailReconfigurationTime>? FromReconfigurations { get; set; }

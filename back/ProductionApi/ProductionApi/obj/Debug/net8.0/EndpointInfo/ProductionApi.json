@@ -1706,6 +1706,16 @@
         "tags": [
           "Operations"
         ],
+        "parameters": [
+          {
+            "name": "detailID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -3428,6 +3438,33 @@
             "maxLength": 30,
             "minLength": 1,
             "type": "string"
+          },
+          "operationCode": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "operationType": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "reconfigurationTime": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sequenceNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "setupPercentage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false

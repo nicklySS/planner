@@ -18,12 +18,19 @@ namespace ProductionApi.Controllers
 
         // GET: api/Operations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Operation>>> GetOperations()
+        public async Task<ActionResult<IEnumerable<Operation>>> GetOperations([FromQuery] int? detailID = null)
         {
-            return await _context.Operations
+            var query = _context.Operations
                 .Include(o => o.Equipment)
                 .Include(o => o.Detail)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (detailID.HasValue)
+            {
+                query = query.Where(o => o.DetailID == detailID.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         // GET: api/Operations/5
@@ -50,7 +57,13 @@ namespace ProductionApi.Controllers
             _context.Operations.Add(operation);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetOperation), new { id = operation.OperationID }, operation);
+            // Reload with includes
+            var createdOperation = await _context.Operations
+                .Include(o => o.Equipment)
+                .Include(o => o.Detail)
+                .FirstOrDefaultAsync(o => o.OperationID == operation.OperationID);
+
+            return CreatedAtAction(nameof(GetOperation), new { id = operation.OperationID }, createdOperation);
         }
 
         // PUT: api/Operations/5
