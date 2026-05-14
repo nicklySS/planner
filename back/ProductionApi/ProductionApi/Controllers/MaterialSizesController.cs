@@ -93,10 +93,31 @@ namespace ProductionApi.Controllers
                 return NotFound();
             }
 
+            // Удаляем все зависимые записи
+            
+            // 1. Удаляем связи Material <-> MaterialSize
+            var materialSizeLinks = await _context.MaterialMaterialSizes
+                .Where(mms => mms.MaterialSizeID == id)
+                .ToListAsync();
+            _context.MaterialMaterialSizes.RemoveRange(materialSizeLinks);
+            
+            // 2. Удаляем остатки материала
+            var materialStocks = await _context.MaterialStocks
+                .Where(ms => ms.MaterialSizeID == id)
+                .ToListAsync();
+            _context.MaterialStocks.RemoveRange(materialStocks);
+            
+            // 3. Удаляем транзакции материала
+            var materialTransactions = await _context.MaterialTransactions
+                .Where(mt => mt.MaterialSizeID == id)
+                .ToListAsync();
+            _context.MaterialTransactions.RemoveRange(materialTransactions);
+            
+            // 4. Удаляем размер
             _context.MaterialSizes.Remove(size);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Размер и все зависимые записи успешно удалены" });
         }
 
         private bool MaterialSizeExists(int id)

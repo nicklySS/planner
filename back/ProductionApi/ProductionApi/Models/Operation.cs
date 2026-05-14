@@ -24,6 +24,12 @@ namespace ProductionApi.Models
         [JsonIgnore]
         public Detail? Detail { get; set; }
 
+        /* FK на MaterialSize (размерность материала детали) */
+        public int? MaterialSizeID { get; set; }
+
+        [JsonIgnore]
+        public MaterialSize? MaterialSize { get; set; }
+
         [Required]
         [Range(0, int.MaxValue)]
         public int PlannedQuantity { get; set; }

@@ -152,6 +152,12 @@ namespace ProductionApi.Data
                 .WithMany(d => d.Operations)
                 .HasForeignKey(o => o.DetailID);
 
+            modelBuilder.Entity<Operation>()
+                .HasOne(o => o.MaterialSize)
+                .WithMany()
+                .HasForeignKey(o => o.MaterialSizeID)
+                .OnDelete(DeleteBehavior.SetNull);
+
             // Настройка для Detail
             modelBuilder.Entity<Detail>()
                 .HasOne(d => d.Material)

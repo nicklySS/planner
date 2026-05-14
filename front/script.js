@@ -1982,6 +1982,7 @@ function showOperationModal(operation = null) {
         const content = `
             <form id="operation-form">
                 <input type="hidden" id="operation-id" value="${operation?.operationID || ''}">
+                <input type="hidden" id="material-size-id" value="${operation?.materialSizeID || ''}">
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -2026,6 +2027,22 @@ function showOperationModal(operation = null) {
                         <label for="completed-quantity">Выполнено</label>
                         <input type="number" id="completed-quantity" class="form-control" 
                                value="${operation?.completedQuantity || 0}" min="0">
+                    </div>
+                </div>
+
+                <div class="form-row" id="material-sizes-row" style="display: none;">
+                    <div class="form-group">
+                        <label for="material-size-unit">Размерность материала</label>
+                        <select id="material-size-unit" class="form-control">
+                            <option value="">Выберите тип размерности</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="material-size-value">Размер *</label>
+                        <select id="material-size-value" class="form-control">
+                            <option value="">Выберите размер</option>
+                        </select>
                     </div>
                 </div>
 
@@ -2074,6 +2091,95 @@ function showOperationModal(operation = null) {
         
         showModal(title, content);
         
+        // Если редактируем и есть выбранная деталь, загружаем размерности
+        if (isEdit && operation?.detailID) {
+            setTimeout(() => {
+                $('#detail-id').trigger('change');
+            }, 100);
+        }
+        
+        // При выборе детали, загружаем размерности материала
+        $('#detail-id').on('change', async function() {
+            const detailId = $(this).val();
+            if (!detailId) {
+                $('#material-sizes-row').hide();
+                return;
+            }
+            
+            try {
+                const response = await apiRequest('GET', `Operations/material-sizes?detailId=${detailId}`);
+                
+                if (response && response.materialSizesByUnit) {
+                    const units = Object.keys(response.materialSizesByUnit);
+                    const savedMaterialSizeID = $('#material-size-id').val();
+                    
+                    // Заполняем селект с типами размерностей
+                    const unitOptions = units.map(unit => `
+                        <option value="${unit}">${unit}</option>
+                    `).join('');
+                    
+                    $('#material-size-unit').html('<option value="">Выберите тип размерности</option>' + unitOptions);
+                    
+                    // Если редактируем и есть сохраненный размер - выбираем его
+                    if (savedMaterialSizeID) {
+                        // Ищем в каком Unit находится сохраненный размер
+                        let foundUnit = null;
+                        for (const unit in response.materialSizesByUnit) {
+                            const hasSize = response.materialSizesByUnit[unit].some(s => s.materialSizeID == savedMaterialSizeID);
+                            if (hasSize) {
+                                foundUnit = unit;
+                                break;
+                            }
+                        }
+                        
+                        if (foundUnit) {
+                            $('#material-size-unit').val(foundUnit).trigger('change');
+                            
+                            // После смены Unit, выбираем сохраненный размер
+                            setTimeout(() => {
+                                $('#material-size-value').val(savedMaterialSizeID);
+                            }, 50);
+                        }
+                    }
+                    
+                    // При выборе типа размерности, показываем размеры этого типа
+                    $('#material-size-unit').off('change').on('change', function() {
+                        const selectedUnit = $(this).val();
+                        if (!selectedUnit) {
+                            $('#material-size-value').html('<option value="">Выберите размер</option>');
+                            return;
+                        }
+                        
+                        const sizes = response.materialSizesByUnit[selectedUnit];
+                        const sizeOptions = sizes.map(size => `
+                            <option value="${size.materialSizeID}">
+                                ${size.sizeValue} ${size.unit}
+                            </option>
+                        `).join('');
+                        
+                        $('#material-size-value').html('<option value="">Выберите размер</option>' + sizeOptions);
+                        
+                        // Если есть сохраненное значение, выбираем его
+                        if (savedMaterialSizeID && $('#material-size-value').find(`option[value="${savedMaterialSizeID}"]`).length) {
+                            $('#material-size-value').val(savedMaterialSizeID);
+                        }
+                    });
+                    
+                    // При выборе размера обновляем скрытое поле
+                    $('#material-size-value').off('change').on('change', function() {
+                        $('#material-size-id').val($(this).val());
+                    });
+                    
+                    $('#material-sizes-row').show();
+                } else {
+                    $('#material-sizes-row').hide();
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки размерностей:', error);
+                $('#material-sizes-row').hide();
+            }
+        });
+        
         $('#operation-form').submit(async function(e) {
             e.preventDefault();
             
@@ -2081,6 +2187,7 @@ function showOperationModal(operation = null) {
                 operationID: $('#operation-id').val() || 0,
                 equipmentID: parseInt($('#equipment-id').val()),
                 detailID: parseInt($('#detail-id').val()),
+                materialSizeID: $('#material-size-id').val() ? parseInt($('#material-size-id').val()) : null,
                 operationCode: $('#operation-code').val() || null,
                 operationType: $('#operation-type').val() || null,
                 plannedQuantity: parseInt($('#planned-quantity').val()),

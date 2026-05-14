@@ -38,6 +38,37 @@ namespace ProductionApi.Controllers
             return Ok(new
             {
                 stock.MaterialStockID,
+                stock.MaterialID,
+                stock.MaterialSizeID,
+                Material = stock.Material?.MaterialName,
+                Size = stock.MaterialSize?.SizeValue,
+                Unit = stock.MaterialSize?.Unit,
+                CurrentQuantity = stock.CurrentQuantity,
+                ReceivedQuantity = stock.ReceivedQuantity,
+                UsedQuantity = stock.UsedQuantity,
+                LastUpdated = stock.LastUpdated
+            });
+        }
+
+        /// <summary>
+        /// Получить остаток материала по ID остатка
+        /// </summary>
+        [HttpGet("stock-by-id/{stockId}")]
+        public async Task<ActionResult> GetMaterialStockById(int stockId)
+        {
+            var stock = await _context.MaterialStocks
+                .Include(s => s.Material)
+                .Include(s => s.MaterialSize)
+                .FirstOrDefaultAsync(ms => ms.MaterialStockID == stockId);
+
+            if (stock == null)
+                return NotFound("Material stock not found");
+
+            return Ok(new
+            {
+                stock.MaterialStockID,
+                stock.MaterialID,
+                stock.MaterialSizeID,
                 Material = stock.Material?.MaterialName,
                 Size = stock.MaterialSize?.SizeValue,
                 Unit = stock.MaterialSize?.Unit,
@@ -175,6 +206,54 @@ namespace ProductionApi.Controllers
                     ReceivedQuantity = stock.ReceivedQuantity,
                     UsedQuantity = stock.UsedQuantity
                 }
+            });
+        }
+
+        /// <summary>
+        /// Обновить остаток материала
+        /// </summary>
+        [HttpPut("stock/{materialStockId}")]
+        public async Task<ActionResult> UpdateMaterialStock(int materialStockId, [FromBody] UpdateMaterialStockDto dto)
+        {
+            var stock = await _context.MaterialStocks.FindAsync(materialStockId);
+            if (stock == null)
+                return NotFound("Material stock not found");
+
+            stock.CurrentQuantity = dto.CurrentQuantity;
+            stock.ReceivedQuantity = dto.ReceivedQuantity;
+            stock.UsedQuantity = dto.UsedQuantity;
+            stock.LastUpdated = DateTime.Now;
+
+            _context.MaterialStocks.Update(stock);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Message = "Material stock updated successfully",
+                stock.MaterialStockID,
+                stock.CurrentQuantity,
+                stock.ReceivedQuantity,
+                stock.UsedQuantity
+            });
+        }
+
+        /// <summary>
+        /// Удалить остаток материала
+        /// </summary>
+        [HttpDelete("stock/{materialStockId}")]
+        public async Task<ActionResult> DeleteMaterialStock(int materialStockId)
+        {
+            var stock = await _context.MaterialStocks.FindAsync(materialStockId);
+            if (stock == null)
+                return NotFound("Material stock not found");
+
+            _context.MaterialStocks.Remove(stock);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Message = "Material stock deleted successfully",
+                DeletedStockId = materialStockId
             });
         }
 
@@ -317,5 +396,19 @@ namespace ProductionApi.Controllers
         public decimal Quantity { get; set; }
         public string? Description { get; set; }
         public int? DocumentNumber { get; set; }
+    }
+
+    /// <summary>
+    /// DTO для обновления остатка материала
+    /// </summary>
+    public class UpdateMaterialStockDto
+    {
+        public int MaterialStockID { get; set; }
+        public int MaterialID { get; set; }
+        public int MaterialSizeID { get; set; }
+        public decimal CurrentQuantity { get; set; }
+        public decimal ReceivedQuantity { get; set; }
+        public decimal UsedQuantity { get; set; }
+        public DateTime LastUpdated { get; set; }
     }
 }

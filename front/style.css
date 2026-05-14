@@ -698,6 +698,48 @@ body {
     color: #0c5460;
 }
 
+/* Кнопки действий в таблицах */
+.actions {
+    white-space: nowrap;
+    text-align: center;
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 4px;
+    font-size: 1rem;
+}
+
+.btn-edit {
+    background-color: #e7f3ff;
+    color: #0066cc;
+}
+
+.btn-edit:hover {
+    background-color: #0066cc;
+    color: var(--white);
+    transform: scale(1.1);
+}
+
+.btn-delete {
+    background-color: #ffe7e7;
+    color: #cc0000;
+}
+
+.btn-delete:hover {
+    background-color: #cc0000;
+    color: var(--white);
+    transform: scale(1.1);
+}
+
 /* Загрузка */
 .loading {
     display: flex;
