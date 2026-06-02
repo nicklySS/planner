@@ -23,11 +23,28 @@ $(document).ready(function() {
     loadRecentActivity();
     initializeExportButtons();
     
+    // Загружаем все справочники при инициализации
+    loadDetails();
+    loadEquipment();
+    loadWorkplaces();
+    loadShifts();
+    loadOperations();
+    loadMaterials();
+    loadMaterialSizes();
+    loadPeople();
+    loadReconfigurations();
+    
     // Инициализируем табель рабочего времени
     const today = new Date();
     const monthStr = String(today.getMonth() + 1).padStart(2, '0');
     $('#timesheet-month').val(`${today.getFullYear()}-${monthStr}`);
     loadTimeSheet();
+    
+    // Инициализируем табель станков
+    const today2 = new Date();
+    const monthStr2 = String(today2.getMonth() + 1).padStart(2, '0');
+    $('#equipment-timesheet-month').val(`${today2.getFullYear()}-${monthStr2}`);
+    loadEquipmentTimeSheet();
     
     // Инициализируем учёт материалов
     initializeInventory();
@@ -134,6 +151,173 @@ function initializeApp() {
     });
 }
 
+// ===== ФУНКЦИИ ДЛЯ ФОРМАТИРОВАНИЯ EXCEL (ExcelJS) =====
+
+// Стили для заголовков
+const headerStyle = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF1F4E78' } // Темно-синий
+    },
+    font: {
+        bold: true,
+        color: { argb: 'FFFFFFFF' }, // Белый
+        size: 12
+    },
+    alignment: {
+        horizontal: 'center',
+        vertical: 'center',
+        wrapText: true
+    },
+    border: {
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } },
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } }
+    }
+};
+
+// Стиль для четных строк
+const evenRowStyle = {
+    fill: {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFF2F2F2' } // Светло-серый
+    },
+    border: {
+        left: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+        right: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+        top: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+        bottom: { style: 'thin', color: { argb: 'FFD9D9D9' } }
+    },
+    alignment: {
+        vertical: 'center',
+        wrapText: true
+    }
+};
+
+// Стиль для нечетных строк
+const oddRowStyle = {
+    border: {
+        left: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+        right: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+        top: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+        bottom: { style: 'thin', color: { argb: 'FFD9D9D9' } }
+    },
+    alignment: {
+        vertical: 'center',
+        wrapText: true
+    }
+};
+
+// Создание и экспорт отформатированного Excel файла с ExcelJS
+function exportFormattedExcel(data, fileName, sheetName, columnWidths) {
+    if (!data || data.length === 0) {
+        showNotification('Нет данных для экспорта', 'warning');
+        return;
+    }
+
+    try {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet(sheetName);
+
+        // Добавляем заголовки
+        const headers = Object.keys(data[0]);
+        const headerRow = worksheet.addRow(headers);
+        
+        // Применяем стиль к заголовкам
+        headerRow.eachCell((cell) => {
+            cell.style = headerStyle;
+        });
+
+        // Добавляем данные
+        data.forEach((item, rowIndex) => {
+            const row = worksheet.addRow(Object.values(item));
+            row.eachCell((cell) => {
+                // Применяем чередующийся стиль к строкам
+                cell.style = rowIndex % 2 === 0 ? evenRowStyle : oddRowStyle;
+            });
+        });
+
+        // Устанавливаем ширину колонок
+        if (columnWidths && columnWidths.length > 0) {
+            columnWidths.forEach((colWidth, index) => {
+                worksheet.columns[index].width = colWidth.wch || 15;
+            });
+        } else {
+            // По умолчанию ширина 20
+            worksheet.columns.forEach(column => {
+                column.width = 20;
+            });
+        }
+
+        // Сохраняем файл
+        const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, `${fileName}_${currentDate}.xlsx`);
+            showNotification(`Отчёт "${fileName}" успешно экспортирован в Excel`, 'success');
+        });
+    } catch (error) {
+        console.error('Ошибка при экспорте:', error);
+        showNotification('Ошибка при экспорте в Excel', 'error');
+    }
+}
+
+// Экспорт нескольких листов с форматированием
+function exportFormattedMultiSheetExcel(sheets, fileName) {
+    try {
+        const workbook = new ExcelJS.Workbook();
+
+        sheets.forEach(sheet => {
+            const data = sheet.data;
+            if (!data || data.length === 0) return;
+
+            const worksheet = workbook.addWorksheet(sheet.name);
+
+            // Добавляем заголовки
+            const headers = Object.keys(data[0]);
+            const headerRow = worksheet.addRow(headers);
+            
+            // Применяем стиль к заголовкам
+            headerRow.eachCell((cell) => {
+                cell.style = headerStyle;
+            });
+
+            // Добавляем данные
+            data.forEach((item, rowIndex) => {
+                const row = worksheet.addRow(Object.values(item));
+                row.eachCell((cell) => {
+                    cell.style = rowIndex % 2 === 0 ? evenRowStyle : oddRowStyle;
+                });
+            });
+
+            // Устанавливаем ширину колонок
+            if (sheet.columnWidths && sheet.columnWidths.length > 0) {
+                sheet.columnWidths.forEach((colWidth, index) => {
+                    worksheet.columns[index].width = colWidth.wch || 15;
+                });
+            } else {
+                worksheet.columns.forEach(column => {
+                    column.width = 20;
+                });
+            }
+        });
+
+        // Сохраняем файл
+        const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, `${fileName}_${currentDate}.xlsx`);
+            showNotification(`Отчёт "${fileName}" успешно экспортирован в Excel`, 'success');
+        });
+    } catch (error) {
+        console.error('Ошибка при экспорте:', error);
+        showNotification('Ошибка при экспорте в Excel', 'error');
+    }
+}
+
 // Инициализация кнопок экспорта
 function initializeExportButtons() {
     // Детали
@@ -167,6 +351,9 @@ function initializeExportButtons() {
     // Сотрудники
     $('#export-people-excel').click(() => exportToExcel('people', 'Сотрудники'));
     $('#export-people-word').click(() => exportToWord('people', 'Сотрудники'));
+    
+    // Переналадки
+    $('#export-reconfigurations-excel').click(() => exportReconfigurationsToExcel());
     
     // Табель
     $('#export-timesheet-excel').click(() => exportTimeSheetToExcel());
@@ -207,22 +394,11 @@ function exportToExcel(tableType, fileName) {
     // Преобразуем данные для Excel
     const worksheetData = prepareDataForExport(data, tableType);
     
-    // Создаем workbook и worksheet
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(worksheetData);
-    
-    // Настраиваем ширину колонок
+    // Получаем ширину колонок
     const colWidths = getColumnWidths(tableType);
-    ws['!cols'] = colWidths;
     
-    // Добавляем worksheet в workbook
-    XLSX.utils.book_append_sheet(wb, ws, fileName);
-    
-    // Сохраняем файл
-    const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-    XLSX.writeFile(wb, `${fileName}_${currentDate}.xlsx`);
-    
-    showNotification(`Отчёт "${fileName}" успешно экспортирован в Excel`, 'success');
+    // Экспортируем с форматированием
+    exportFormattedExcel(worksheetData, fileName, fileName, colWidths);
 }
 
 // Экспорт в Word
@@ -286,10 +462,10 @@ function exportMaterialsToExcel() {
         showNotification('Нет данных для экспорта', 'warning');
         return;
     }
-    
-    const wb = XLSX.utils.book_new();
-    
-    // Экспорт материалов
+
+    const sheets = [];
+
+    // Подготовка данных для материалов
     if (materials.length > 0) {
         const materialsData = materials.map(m => ({
             'ID': m.materialID,
@@ -298,12 +474,14 @@ function exportMaterialsToExcel() {
                 `${mms.materialSize?.sizeValue || ''} ${mms.materialSize?.unit || ''}`
             ).join(', ') || '-'
         }));
-        const wsMaterials = XLSX.utils.json_to_sheet(materialsData);
-        wsMaterials['!cols'] = [{ wch: 10 }, { wch: 30 }, { wch: 25 }];
-        XLSX.utils.book_append_sheet(wb, wsMaterials, 'Материалы');
+        sheets.push({
+            name: 'Материалы',
+            data: materialsData,
+            columnWidths: [{ wch: 10 }, { wch: 30 }, { wch: 25 }]
+        });
     }
-    
-    // Экспорт размеров
+
+    // Подготовка данных для размеров
     if (sizes.length > 0) {
         const sizesData = sizes.map(s => ({
             'ID': s.materialSizeID,
@@ -311,15 +489,40 @@ function exportMaterialsToExcel() {
             'Единица': s.unit,
             'Материалы': s.materialMaterialSizes?.length || 0
         }));
-        const wsSizes = XLSX.utils.json_to_sheet(sizesData);
-        wsSizes['!cols'] = [{ wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 12 }];
-        XLSX.utils.book_append_sheet(wb, wsSizes, 'Размеры');
+        sheets.push({
+            name: 'Размеры',
+            data: sizesData,
+            columnWidths: [{ wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 12 }]
+        });
     }
+
+    // Экспортируем с форматированием
+    exportFormattedMultiSheetExcel(sheets, 'Материалы_и_размеры');
+}
+
+// Экспорт переналадок
+function exportReconfigurationsToExcel() {
+    const reconfigurations = cachedData.reconfigurations || [];
     
-    const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-    XLSX.writeFile(wb, `Материалы_и_размеры_${currentDate}.xlsx`);
-    
-    showNotification('Отчёт "Материалы и размеры" успешно экспортирован в Excel', 'success');
+    if (reconfigurations.length === 0) {
+        showNotification('Нет данных для экспорта', 'warning');
+        return;
+    }
+
+    // Преобразуем данные для Excel
+    const data = reconfigurations.map(r => ({
+        'ID': r.detailToDetailReconfigurationTimeID,
+        'От детали': r.fromDetail?.detailName || r.fromDetailID,
+        'В деталь': r.toDetail?.detailName || r.toDetailID,
+        'Время переналадки': r.reconfigurationTimeInMinutes || 0,
+        'Примечание': r.note || '-'
+    }));
+
+    // Получаем ширину колонок
+    const colWidths = [{ wch: 8 }, { wch: 25 }, { wch: 25 }, { wch: 18 }, { wch: 30 }];
+
+    // Экспортируем с форматированием
+    exportFormattedExcel(data, 'Переналадки', 'Переналадки', colWidths);
 }
 
 function exportMaterialsToWord() {
@@ -3417,14 +3620,58 @@ function filterTimesheetBySearch() {
 
 // Функция экспорта табеля в Excel
 function exportTimeSheetToExcel() {
-    const table = document.getElementById('timesheet-table');
-    const monthInput = $('#timesheet-month').val();
-    const monthName = monthInput ? new Date(monthInput + '-01').toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }) : 'Табель';
-    
-    const ws = XLSX.utils.table_to_sheet(table);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, monthName);
-    XLSX.writeFile(wb, `tabель_${monthInput}.xlsx`);
+    try {
+        const table = document.getElementById('timesheet-table');
+        if (!table) {
+            showNotification('Таблица табели не найдена', 'error');
+            return;
+        }
+
+        const monthInput = $('#timesheet-month').val();
+        const monthName = monthInput ? new Date(monthInput + '-01').toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }) : 'Табель';
+        
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet(monthName);
+
+        // Получаем все строки и ячейки таблицы
+        const rows = table.querySelectorAll('tr');
+        
+        rows.forEach((row, rowIndex) => {
+            const cells = row.querySelectorAll('th, td');
+            const rowData = [];
+            cells.forEach(cell => {
+                rowData.push(cell.textContent.trim());
+            });
+            
+            const worksheetRow = worksheet.addRow(rowData);
+            
+            // Применяем стили
+            worksheetRow.eachCell((cell) => {
+                if (rowIndex === 0) {
+                    // Заголовок
+                    cell.style = headerStyle;
+                } else {
+                    // Данные
+                    cell.style = rowIndex % 2 === 0 ? evenRowStyle : oddRowStyle;
+                }
+            });
+        });
+
+        // Устанавливаем ширину колонок
+        worksheet.columns.forEach(column => {
+            column.width = 15;
+        });
+
+        const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, `табель_${monthInput}_${currentDate}.xlsx`);
+            showNotification('Табель успешно экспортирован в Excel', 'success');
+        });
+    } catch (error) {
+        console.error('Ошибка при экспорте табели:', error);
+        showNotification('Ошибка при экспорте табели', 'error');
+    }
 }
 
 // ========== ФУНКЦИИ ДЛЯ ТАБЕЛЯ СТАНКОВ ==========
@@ -3811,14 +4058,58 @@ function deleteEquipmentTimesheetEntry(equipmentId, day, $cell) {
 
 // Экспорт табеля станков в Excel
 function exportEquipmentTimeSheetToExcel() {
-    const table = document.getElementById('equipment-timesheet-table');
-    const monthInput = $('#equipment-timesheet-month').val();
-    const monthName = monthInput ? new Date(monthInput + '-01').toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }) : 'Табель станков';
-    
-    const ws = XLSX.utils.table_to_sheet(table);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, monthName);
-    XLSX.writeFile(wb, `табель_станков_${monthInput}.xlsx`);
+    try {
+        const table = document.getElementById('equipment-timesheet-table');
+        if (!table) {
+            showNotification('Таблица табели станков не найдена', 'error');
+            return;
+        }
+
+        const monthInput = $('#equipment-timesheet-month').val();
+        const monthName = monthInput ? new Date(monthInput + '-01').toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }) : 'Табель станков';
+        
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet(monthName);
+
+        // Получаем все строки и ячейки таблицы
+        const rows = table.querySelectorAll('tr');
+        
+        rows.forEach((row, rowIndex) => {
+            const cells = row.querySelectorAll('th, td');
+            const rowData = [];
+            cells.forEach(cell => {
+                rowData.push(cell.textContent.trim());
+            });
+            
+            const worksheetRow = worksheet.addRow(rowData);
+            
+            // Применяем стили
+            worksheetRow.eachCell((cell) => {
+                if (rowIndex === 0) {
+                    // Заголовок
+                    cell.style = headerStyle;
+                } else {
+                    // Данные
+                    cell.style = rowIndex % 2 === 0 ? evenRowStyle : oddRowStyle;
+                }
+            });
+        });
+
+        // Устанавливаем ширину колонок
+        worksheet.columns.forEach(column => {
+            column.width = 15;
+        });
+
+        const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, `табель_станков_${monthInput}_${currentDate}.xlsx`);
+            showNotification('Табель станков успешно экспортирован в Excel', 'success');
+        });
+    } catch (error) {
+        console.error('Ошибка при экспорте табели станков:', error);
+        showNotification('Ошибка при экспорте табели станков', 'error');
+    }
 }
 
 // Глобальная переменная для хранения timeout поиска

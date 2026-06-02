@@ -29,6 +29,11 @@ function initializeInventory() {
     loadOperations();
     loadDetailsForInventory();
     
+    // Загружаем все таблицы при инициализации параллельно
+    loadStocks();
+    loadTransactions();
+    loadInventoryReport();
+    
     // Кнопки табов
     $('.tab-btn[data-inv-tab]').click(function() {
         const tabId = $(this).data('inv-tab');
@@ -104,6 +109,7 @@ async function loadStocks() {
         if (!response.ok) throw new Error('Ошибка загрузки остатков');
         
         const stocks = await response.json();
+        cachedData.materialStocks = stocks;
         displayStocks(stocks);
     } catch (error) {
         showNotification(`Ошибка: ${error.message}`, 'error');
@@ -159,7 +165,12 @@ function displayStocks(stocks) {
 // Загрузить историю операций
 async function loadTransactions() {
     try {
-        const materialId = $('#transaction-material-filter').val() || null;
+        let materialId = $('#transaction-material-filter').val();
+        // Ensure materialId is either a valid number or empty/null
+        if (!materialId || materialId === 'undefined' || isNaN(materialId)) {
+            materialId = null;
+        }
+        
         const url = materialId 
             ? `${API_BASE_URL}/materialinventory/transactions/${materialId}`
             : `${API_BASE_URL}/materialinventory/all-transactions`;
@@ -172,14 +183,21 @@ async function loadTransactions() {
         
         // Если это первый раз, заполним фильтр материалов
         if ($('#transaction-material-filter').find('option').length === 1) {
-            const materials = [...new Set(transactions.map(t => ({ 
-                id: t.materialID, 
-                name: t.material 
-            })))];
+            // Получаем уникальные материалы из операций
+            const materialsMap = new Map();
+            transactions.forEach(t => {
+                if (t.materialID && t.material) {
+                    materialsMap.set(t.materialID, t.material);
+                }
+            });
             
-            materials.forEach(m => {
+            // Добавляем в выпадающий список (отсортировано по названию)
+            const sortedMaterials = Array.from(materialsMap.entries())
+                .sort((a, b) => a[1].localeCompare(b[1], 'ru'));
+            
+            sortedMaterials.forEach(([id, name]) => {
                 $('#transaction-material-filter').append(`
-                    <option value="${m.id}">${m.name}</option>
+                    <option value="${id}">${name}</option>
                 `);
             });
         }
@@ -1050,33 +1068,98 @@ function exportInventoryToExcel() {
         loadStocks().then(() => exportInventoryToExcel());
         return;
     }
-    
-    const data = stocks.map(stock => ({
-        'Материал': stock.material,
-        'Размер': stock.size,
-        'Единица': stock.unit,
-        'Остаток': stock.currentQuantity,
-        'Получено': stock.receivedQuantity,
-        'Использовано': stock.usedQuantity,
-        'Последнее обновление': new Date(stock.lastUpdated).toLocaleString('ru-RU')
-    }));
-    
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    worksheet['!cols'] = [
-        { wch: 20 },
-        { wch: 15 },
-        { wch: 10 },
-        { wch: 10 },
-        { wch: 10 },
-        { wch: 12 },
-        { wch: 25 }
-    ];
-    
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Остатки материалов');
-    
-    const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-    XLSX.writeFile(workbook, `Остатки_материалов_${currentDate}.xlsx`);
-    
-    showNotification('Отчёт успешно экспортирован в Excel', 'success');
+
+    try {
+        const data = stocks.map(stock => ({
+            'Материал': stock.material,
+            'Размер': stock.size,
+            'Единица': stock.unit,
+            'Остаток': stock.currentQuantity,
+            'Получено': stock.receivedQuantity,
+            'Использовано': stock.usedQuantity,
+            'Последнее обновление': new Date(stock.lastUpdated).toLocaleString('ru-RU')
+        }));
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Остатки материалов');
+
+        // Добавляем заголовки
+        const headers = Object.keys(data[0]);
+        const headerRow = worksheet.addRow(headers);
+        
+        // Применяем стиль к заголовкам
+        headerRow.eachCell((cell) => {
+            cell.style = {
+                fill: {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF1F4E78' }
+                },
+                font: {
+                    bold: true,
+                    color: { argb: 'FFFFFFFF' },
+                    size: 12
+                },
+                alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
+                    wrapText: true
+                },
+                border: {
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } },
+                    top: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'thin', color: { argb: 'FF000000' } }
+                }
+            };
+        });
+
+        // Добавляем данные
+        data.forEach((item, rowIndex) => {
+            const row = worksheet.addRow(Object.values(item));
+            row.eachCell((cell) => {
+                const baseStyle = {
+                    border: {
+                        left: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+                        right: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+                        top: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+                        bottom: { style: 'thin', color: { argb: 'FFD9D9D9' } }
+                    },
+                    alignment: {
+                        vertical: 'center',
+                        wrapText: true
+                    }
+                };
+
+                if (rowIndex % 2 === 0) {
+                    baseStyle.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFF2F2F2' }
+                    };
+                }
+
+                cell.style = baseStyle;
+            });
+        });
+
+        // Устанавливаем ширину колонок
+        worksheet.columns[0].width = 20;
+        worksheet.columns[1].width = 15;
+        worksheet.columns[2].width = 10;
+        worksheet.columns[3].width = 10;
+        worksheet.columns[4].width = 10;
+        worksheet.columns[5].width = 12;
+        worksheet.columns[6].width = 25;
+
+        const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, `Остатки_материалов_${currentDate}.xlsx`);
+            showNotification('Отчёт успешно экспортирован в Excel', 'success');
+        });
+    } catch (error) {
+        console.error('Ошибка при экспорте:', error);
+        showNotification('Ошибка при экспорте в Excel', 'error');
+    }
 }

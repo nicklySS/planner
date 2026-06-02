@@ -271,6 +271,7 @@ namespace ProductionApi.Controllers
                 .Select(t => new
                 {
                     t.TransactionID,
+                    t.MaterialID,
                     Material = t.Material!.MaterialName,
                     Size = t.MaterialSize!.SizeValue,
                     Unit = t.MaterialSize!.Unit,
@@ -325,6 +326,7 @@ namespace ProductionApi.Controllers
                 .Select(t => new
                 {
                     t.TransactionID,
+                    t.MaterialID,
                     Material = t.Material!.MaterialName,
                     Size = t.MaterialSize!.SizeValue,
                     Unit = t.MaterialSize!.Unit,
