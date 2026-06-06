@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -92,6 +93,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/EquipmentTimeSheet
+        [AdminWrite]
         [HttpPost]
         public async Task<ActionResult<EquipmentTimeSheet>> CreateEquipmentTimeSheet(EquipmentTimeSheet equipmentTimeSheet)
         {
@@ -109,6 +111,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/EquipmentTimeSheet/5
+        [AdminWrite]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEquipmentTimeSheet(int id, EquipmentTimeSheet equipmentTimeSheet)
         {
@@ -140,6 +143,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/EquipmentTimeSheet/5
+        [AdminWrite]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipmentTimeSheet(int id)
         {

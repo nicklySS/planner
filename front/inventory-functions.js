@@ -1,5 +1,7 @@
 // ===== ФУНКЦИИ ДЛЯ УЧЁТА МАТЕРИАЛОВ =====
 
+const INV_FETCH_CREDS = { credentials: 'include' };
+
 // Helper функция: конвертировать количество в кг в штуки
 function convertToUnits(quantityInBase, materialSize) {
     if (!materialSize || !materialSize.sizeValue) return quantityInBase;
@@ -105,7 +107,7 @@ function switchInventoryTab(tabId) {
 // Загрузить остатки материалов
 async function loadStocks() {
     try {
-        const response = await fetch(`${API_BASE_URL}/materialinventory/stocks`);
+        const response = await fetch(`${API_BASE_URL}/materialinventory/stocks`, INV_FETCH_CREDS);
         if (!response.ok) throw new Error('Ошибка загрузки остатков');
         
         const stocks = await response.json();
@@ -149,12 +151,13 @@ function displayStocks(stocks) {
                 <td>${usedInUnits.toFixed(2)}</td>
                 <td>${lastUpdated}</td>
                 <td class="actions">
+                    ${typeof isAdmin === 'function' && isAdmin() ? `
                     <button class="btn-icon btn-edit" onclick="editStock(${stock.materialStockID})" title="Редактировать">
                         <i class="fas fa-edit"></i>
                     </button>
                     <button class="btn-icon btn-delete" onclick="deleteStock(${stock.materialStockID})" title="Удалить">
                         <i class="fas fa-trash"></i>
-                    </button>
+                    </button>` : ''}
                 </td>
             </tr>
         `;
@@ -175,7 +178,7 @@ async function loadTransactions() {
             ? `${API_BASE_URL}/materialinventory/transactions/${materialId}`
             : `${API_BASE_URL}/materialinventory/all-transactions`;
         
-        const response = await fetch(url);
+        const response = await fetch(url, INV_FETCH_CREDS);
         if (!response.ok) throw new Error('Ошибка загрузки операций');
         
         const transactions = await response.json();
@@ -241,7 +244,7 @@ function displayTransactions(transactions) {
 // Загрузить отчёт
 async function loadInventoryReport() {
     try {
-        const response = await fetch(`${API_BASE_URL}/materialinventory/report`);
+        const response = await fetch(`${API_BASE_URL}/materialinventory/report`, INV_FETCH_CREDS);
         if (!response.ok) throw new Error('Ошибка загрузки отчёта');
         
         const report = await response.json();
@@ -419,7 +422,8 @@ function showReceiptModal() {
             const response = await fetch(`${API_BASE_URL}/materialinventory/receipt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: 'include'
             });
             
             if (!response.ok) throw new Error('Ошибка при добавлении прихода');
@@ -618,7 +622,7 @@ function showConsumptionModal() {
             
             // Получаем остатки для этого материала с разными размерами
             try {
-                const response = await fetch(`${API_BASE_URL}/materialinventory/stocks`);
+                const response = await fetch(`${API_BASE_URL}/materialinventory/stocks`, INV_FETCH_CREDS);
                 const stocks = await response.json();
                 
                 // Отфильтровываем остатки по материалу и сортируем по близости к требуемому
@@ -688,7 +692,8 @@ function showConsumptionModal() {
         
         try {
             const response = await fetch(
-                `${API_BASE_URL}/materialinventory/stock/${materialId}/${sizeId}`
+                `${API_BASE_URL}/materialinventory/stock/${materialId}/${sizeId}`,
+                INV_FETCH_CREDS
             );
             
             if (!response.ok) {
@@ -772,7 +777,8 @@ function showConsumptionModal() {
             const response = await fetch(`${API_BASE_URL}/materialinventory/consumption`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: 'include'
             });
             
             if (!response.ok) throw new Error('Ошибка при добавлении расхода');
@@ -906,7 +912,8 @@ async function returnSurplusToStock(materialId, surplusQuantity, unit, operation
         const response = await fetch(`${API_BASE_URL}/materialinventory/receipt`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(receiptData)
+            body: JSON.stringify(receiptData),
+            credentials: 'include'
         });
         
         if (!response.ok) throw new Error('Ошибка при возврате излишка');
@@ -927,7 +934,8 @@ async function editStock(materialStockId) {
     try {
         // Загружаем данные остатка
         const response = await fetch(`${API_BASE_URL}/materialinventory/stock-by-id/${materialStockId}`, {
-            method: 'GET'
+            method: 'GET',
+            credentials: 'include'
         });
         
         if (!response.ok) {
@@ -1019,7 +1027,8 @@ async function editStock(materialStockId) {
                 const updateResponse = await fetch(`${API_BASE_URL}/materialinventory/stock/${stock.materialStockID}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedStock)
+                    body: JSON.stringify(updatedStock),
+                    credentials: 'include'
                 });
                 
                 if (!updateResponse.ok) throw new Error('Ошибка при сохранении');
@@ -1045,7 +1054,8 @@ async function deleteStock(materialStockId) {
     
     try {
         const response = await fetch(`${API_BASE_URL}/materialinventory/stock/${materialStockId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            credentials: 'include'
         });
         
         if (!response.ok) throw new Error('Ошибка при удалении');

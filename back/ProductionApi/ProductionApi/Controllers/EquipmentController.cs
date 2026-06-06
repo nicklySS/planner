@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -70,6 +72,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/Equipment
+        [Authorize(Policy = AuthorizationPolicies.CanWriteEquipment)]
         [HttpPost]
         public async Task<ActionResult<Equipment>> CreateEquipment(Equipment equipment)
         {
@@ -80,6 +83,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/Equipment/5
+        [Authorize(Policy = AuthorizationPolicies.CanWriteEquipment)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEquipment(int id, Equipment equipment)
         {
@@ -110,6 +114,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/Equipment/5
+        [Authorize(Policy = AuthorizationPolicies.CanWriteEquipment)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipment(int id)
         {

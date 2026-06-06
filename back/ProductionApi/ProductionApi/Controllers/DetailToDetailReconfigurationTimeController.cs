@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -46,6 +47,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/DetailToDetailReconfigurationTime
+        [AdminWrite]
         [HttpPost]
         public async Task<ActionResult<DetailToDetailReconfigurationTime>> CreateReconfiguration(DetailToDetailReconfigurationTime reconfiguration)
         {
@@ -56,6 +58,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/DetailToDetailReconfigurationTime/5
+        [AdminWrite]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReconfiguration(int id, DetailToDetailReconfigurationTime reconfiguration)
         {
@@ -86,6 +89,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/DetailToDetailReconfigurationTime/5
+        [AdminWrite]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReconfiguration(int id)
         {

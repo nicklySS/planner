@@ -2217,3 +2217,165 @@ textarea.form-control {
         transform: scale(1);
     }
 }
+
+/* Стили для checkboxes в формах */
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s ease;
+}
+
+.checkbox-item:hover {
+    background-color: var(--light-gray);
+}
+
+.checkbox-item .checkbox-label {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+}
+
+.checkbox-item input[type="checkbox"] {
+    cursor: pointer;
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+}
+
+.checkbox-item small {
+    color: var(--dark-gray);
+    font-size: 0.85rem;
+    margin-left: 5px;
+}
+
+/* Контейнер для множественного выбора ролей */
+.roles-checkboxes {
+    border: 1px solid var(--medium-gray);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    background-color: #fafafa;
+}
+
+.roles-checkboxes .checkbox-item {
+    margin: 0;
+    padding: 8px 0;
+}
+
+.roles-checkboxes .checkbox-item:not(:last-child) {
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 10px;
+}
+
+.checkbox-label input[type="checkbox"],
+.checkbox-label input[type="radio"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* Авторизация */
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.login-overlay.hidden {
+    display: none;
+}
+
+.login-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    border-top: 4px solid var(--primary-red);
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.login-logo i {
+    font-size: 2rem;
+    color: var(--primary-red);
+}
+
+.login-logo h2 {
+    color: var(--text-color);
+    font-size: 1.8rem;
+}
+
+.login-subtitle {
+    color: var(--dark-gray);
+    margin-bottom: 24px;
+}
+
+.login-card .form-group {
+    margin-bottom: 16px;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--medium-gray);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+
+.login-card input:focus {
+    outline: none;
+    border-color: var(--primary-red);
+}
+
+.login-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    font-size: 1rem;
+}
+
+.login-error {
+    color: var(--primary-red);
+    font-size: 0.9rem;
+    min-height: 20px;
+    margin-bottom: 8px;
+}
+
+.current-user-info {
+    margin-right: 12px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.header .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}

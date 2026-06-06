@@ -1,12 +1,53 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\PlannerProj\\planner\\back\\ProductionApi\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|d:\\plannerproj\\planner\\back\\productionapi\\productionapi\\controllers\\shiftworklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D1F6127-4880-4926-D36F-659194CA7FDF}|ProductionApi\\ProductionApi.csproj|solutionrelative:productionapi\\controllers\\shiftworklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Program.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Program.cs",
+              "RelativeToolTip": "ProductionApi\\Program.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAAA8AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-05T22:08:23.572Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ShiftWorkLogController.cs",
+              "DocumentMoniker": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogController.cs",
+              "RelativeDocumentMoniker": "ProductionApi\\Controllers\\ShiftWorkLogController.cs",
+              "ToolTip": "D:\\PlannerProj\\planner\\back\\ProductionApi\\ProductionApi\\Controllers\\ShiftWorkLogController.cs",
+              "RelativeToolTip": "ProductionApi\\Controllers\\ShiftWorkLogController.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAD4vywAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-05T20:10:32.524Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

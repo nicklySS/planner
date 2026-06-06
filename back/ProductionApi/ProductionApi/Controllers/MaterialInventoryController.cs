@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -107,6 +108,7 @@ namespace ProductionApi.Controllers
         /// <summary>
         /// Приход материала (поступление на склад)
         /// </summary>
+        [AdminWrite]
         [HttpPost("receipt")]
         public async Task<ActionResult> AddMaterialReceipt([FromBody] MaterialReceiptDto dto)
         {
@@ -165,6 +167,7 @@ namespace ProductionApi.Controllers
         /// <summary>
         /// Расход материала (уход со склада/использование)
         /// </summary>
+        [AdminWrite]
         [HttpPost("consumption")]
         public async Task<ActionResult> AddMaterialConsumption([FromBody] MaterialConsumptionDto dto)
         {
@@ -212,6 +215,7 @@ namespace ProductionApi.Controllers
         /// <summary>
         /// Обновить остаток материала
         /// </summary>
+        [AdminWrite]
         [HttpPut("stock/{materialStockId}")]
         public async Task<ActionResult> UpdateMaterialStock(int materialStockId, [FromBody] UpdateMaterialStockDto dto)
         {
@@ -240,6 +244,7 @@ namespace ProductionApi.Controllers
         /// <summary>
         /// Удалить остаток материала
         /// </summary>
+        [AdminWrite]
         [HttpDelete("stock/{materialStockId}")]
         public async Task<ActionResult> DeleteMaterialStock(int materialStockId)
         {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -58,6 +59,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/Materials
+        [AdminWrite]
         [HttpPost]
         public async Task<ActionResult<Material>> CreateMaterial(MaterialDto materialDto)
         {
@@ -95,6 +97,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/Materials/5
+        [AdminWrite]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMaterial(int id, MaterialDto materialDto)
         {
@@ -152,6 +155,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/Materials/5
+        [AdminWrite]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMaterial(int id)
         {

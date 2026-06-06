@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -44,6 +45,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/MaterialMaterialSizes
+        [AdminWrite]
         [HttpPost]
         public async Task<ActionResult<MaterialMaterialSize>> CreateMaterialMaterialSize(MaterialMaterialSize mms)
         {
@@ -56,6 +58,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/MaterialMaterialSizes/5/10
+        [AdminWrite]
         [HttpDelete("{materialId}/{sizeId}")]
         public async Task<IActionResult> DeleteMaterialMaterialSize(int materialId, int sizeId)
         {

@@ -21,6 +21,10 @@ namespace ProductionApi.Models
 
         /* Навигация */
 
+        // 1:1 relationship with Person (обратная навигация)
+        [JsonIgnore]
+        public Person? ResponsiblePerson { get; set; }
+
         // Станки на этом рабочем месте
         [JsonIgnore]
         public ICollection<Equipment>? Equipments { get; set; }

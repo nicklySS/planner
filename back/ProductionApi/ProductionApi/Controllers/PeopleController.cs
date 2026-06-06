@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -20,14 +21,22 @@ namespace ProductionApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
         {
-            return await _context.People.ToListAsync();
+            return await _context.People
+                .Include(p => p.WorkPlace)
+                .Include(p => p.PersonRoles)
+                .ThenInclude(pr => pr.Role)
+                .ToListAsync();
         }
 
         // GET: api/People/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {
-            var person = await _context.People.FindAsync(id);
+            var person = await _context.People
+                .Include(p => p.WorkPlace)
+                .Include(p => p.PersonRoles)
+                .ThenInclude(pr => pr.Role)
+                .FirstOrDefaultAsync(p => p.PersonID == id);
 
             if (person == null)
             {
@@ -38,6 +47,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/People
+        [AdminWrite]
         [HttpPost]
         public async Task<ActionResult<Person>> CreatePerson(Person person)
         {
@@ -48,6 +58,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/People/5
+        [AdminWrite]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePerson(int id, Person person)
         {
@@ -78,6 +89,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/People/5
+        [AdminWrite]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePerson(int id)
         {

@@ -9,18 +9,29 @@ namespace ProductionApi.Models
         [Key]
         public int PersonID { get; set; }
 
-        [Required]
-        [MaxLength(150)]
-        public string FullName { get; set; } = null!;
-
-        [Required]
         [MaxLength(50)]
-        public string Role { get; set; } = null!;
+        public string? EmployeeNumber { get; set; }
+
+        [MaxLength(500)]
+        [JsonIgnore]
+        public string? PasswordHash { get; set; }
+
+        [MaxLength(150)]
+        public string? FullName { get; set; }
 
         [Required]
         public bool IsActive { get; set; } = true;
 
+        // Foreign Key to WorkPlace (1:1 relationship)
+        public int? WorkPlaceID { get; set; }
+
         /* Навигация */
+
+        // 1:1 relationship with WorkPlace
+        public WorkPlace? WorkPlace { get; set; }
+
+        // M:N relationship with Roles
+        public ICollection<PersonRole>? PersonRoles { get; set; }
 
         // Ссылки на ShiftWorkLog, если человек мастер
         [JsonIgnore]

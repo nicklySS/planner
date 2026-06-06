@@ -13,10 +13,16 @@ namespace ProductionApi.Data
         {
         }
 
-        // 1. People
+        // 1. Roles
+        public DbSet<Role> Roles { get; set; }
+
+        // 2. People
         public DbSet<Person> People { get; set; }
 
-        // 2. WorkPlaces
+        // 2a. Person <> Roles (M:N)
+        public DbSet<PersonRole> PersonRoles { get; set; }
+
+        // 3. WorkPlaces
         public DbSet<WorkPlace> WorkPlaces { get; set; }
 
         // 3. Equipment
@@ -134,6 +140,25 @@ namespace ProductionApi.Data
                 .WithMany(eq => eq.ShiftWorkLogs)
                 .HasForeignKey(se => se.EquipmentID);
 
+            // Конфигурация ShiftWorkLog (новые связи)
+            modelBuilder.Entity<ShiftWorkLog>()
+                .HasOne(swl => swl.Worker)
+                .WithMany()
+                .HasForeignKey(swl => swl.WorkerID)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ShiftWorkLog>()
+                .HasOne(swl => swl.Detail)
+                .WithMany()
+                .HasForeignKey(swl => swl.DetailID)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<ShiftWorkLog>()
+                .HasOne(swl => swl.Material)
+                .WithMany()
+                .HasForeignKey(swl => swl.MaterialID)
+                .OnDelete(DeleteBehavior.SetNull);
+
             // Настройка для WorkPlace
             modelBuilder.Entity<WorkPlace>()
                 .HasMany(wp => wp.Equipments)
@@ -175,6 +200,29 @@ namespace ProductionApi.Data
                 .HasMany(p => p.ShiftWorkLogSetupPeople)
                 .WithOne(sp => sp.Person)
                 .HasForeignKey(sp => sp.PersonID);
+
+            // Настройка для Person и WorkPlace (1:1 relationship)
+            modelBuilder.Entity<Person>()
+                .HasOne(p => p.WorkPlace)
+                .WithOne(wp => wp.ResponsiblePerson)
+                .HasForeignKey<Person>(p => p.WorkPlaceID)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Настройка для PersonRole (M:N между Person и Role)
+            modelBuilder.Entity<PersonRole>()
+                .HasKey(pr => pr.PersonRoleID);
+
+            modelBuilder.Entity<PersonRole>()
+                .HasOne(pr => pr.Person)
+                .WithMany(p => p.PersonRoles)
+                .HasForeignKey(pr => pr.PersonID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PersonRole>()
+                .HasOne(pr => pr.Role)
+                .WithMany(r => r.PersonRoles)
+                .HasForeignKey(pr => pr.RoleID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Настройка для ShiftWorkLog
             modelBuilder.Entity<ShiftWorkLog>()

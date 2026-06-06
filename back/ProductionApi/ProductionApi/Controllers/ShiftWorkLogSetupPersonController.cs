@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -44,6 +46,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/ShiftWorkLogSetupPerson
+        [Authorize(Policy = AuthorizationPolicies.CanWriteShifts)]
         [HttpPost]
         public async Task<ActionResult<ShiftWorkLogSetupPerson>> Create(ShiftWorkLogSetupPerson sp)
         {
@@ -54,6 +57,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/ShiftWorkLogSetupPerson/5/10
+        [Authorize(Policy = AuthorizationPolicies.CanWriteShifts)]
         [HttpDelete("{shiftWorkLogId}/{personId}")]
         public async Task<IActionResult> Delete(int shiftWorkLogId, int personId)
         {

@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -68,6 +70,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/DetailOperations
+        [Authorize(Policy = AuthorizationPolicies.CanWriteDetails)]
         [HttpPost]
         public async Task<ActionResult<DetailOperation>> CreateDetailOperation(DetailOperation detailOperation)
         {
@@ -84,6 +87,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/DetailOperations/5
+        [Authorize(Policy = AuthorizationPolicies.CanWriteDetails)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDetailOperation(int id, DetailOperation detailOperation)
         {
@@ -114,6 +118,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/DetailOperations/5
+        [Authorize(Policy = AuthorizationPolicies.CanWriteDetails)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDetailOperation(int id)
         {

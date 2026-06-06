@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -53,6 +54,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/Operations
+        [AdminWrite]
         [HttpPost]
         public async Task<ActionResult<Operation>> CreateOperation(Operation operation)
         {
@@ -70,6 +72,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/Operations/5
+        [AdminWrite]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOperation(int id, Operation operation)
         {
@@ -100,6 +103,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/Operations/5
+        [AdminWrite]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOperation(int id)
         {

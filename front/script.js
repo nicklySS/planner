@@ -1,10 +1,14 @@
 // Конфигурация API
 const API_BASE_URL = 'https://localhost:5008/api';
 
+// Текущий пользователь (заполняется после входа)
+let currentUser = null;
+
 // Глобальные переменные
 let currentTab = 'dashboard';
 let selectedItem = null;
 let cachedData = {
+    roles: [],
     details: [],
     equipment: [],
     workplaces: [],
@@ -17,13 +21,133 @@ let cachedData = {
 };
 
 // Инициализация при загрузке страницы
-$(document).ready(function() {
+$(document).ready(async function() {
+    $.ajaxSetup({ xhrFields: { withCredentials: true } });
     initializeApp();
+    setupAuthHandlers();
+    await initAuth();
+});
+
+function isAdmin() {
+    return currentUser?.roles?.includes('Админ') ?? false;
+}
+
+function canWriteDetails() {
+    return isAdmin() || (currentUser?.roles?.includes('Технолог') ?? false);
+}
+
+function canWriteEquipment() {
+    return isAdmin() || (currentUser?.roles?.includes('Технолог') ?? false);
+}
+
+function canWriteShifts() {
+    return isAdmin() || (currentUser?.roles?.includes('Мастер') ?? false);
+}
+
+function editDeleteButtons(editOnclick, deleteOnclick, allowed) {
+    if (!allowed) return '';
+    return `
+        <button class="btn-icon btn-edit" onclick="${editOnclick}">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn-icon btn-delete" onclick="${deleteOnclick}">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+}
+
+function setupAuthHandlers() {
+    $('#login-form').on('submit', async function(e) {
+        e.preventDefault();
+        $('#login-error').text('');
+        const employeeNumber = $('#login-employee-number').val().trim();
+        const password = $('#login-password').val();
+        try {
+            await performLogin(employeeNumber, password);
+        } catch (error) {
+            $('#login-error').text(error.message || 'Ошибка входа');
+        }
+    });
+
+    $('#logout-btn').click(async function() {
+        try {
+            await fetch(`${API_BASE_URL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (e) { /* ignore */ }
+        currentUser = null;
+        showLoginOverlay();
+    });
+}
+
+async function performLogin(employeeNumber, password) {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ employeeNumber, password })
+    });
+
+    if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || 'Неверный табельный номер или пароль');
+    }
+
+    currentUser = await response.json();
+    onLoginSuccess();
+}
+
+async function initAuth() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, { credentials: 'include' });
+        if (!response.ok) throw new Error('not auth');
+        currentUser = await response.json();
+        onLoginSuccess();
+    } catch {
+        showLoginOverlay();
+    }
+}
+
+function showLoginOverlay() {
+    $('#login-overlay').removeClass('hidden');
+    $('#logout-btn').hide();
+    $('#current-user-info').text('');
+}
+
+function hideLoginOverlay() {
+    $('#login-overlay').addClass('hidden');
+}
+
+function updateUserHeader() {
+    if (!currentUser) return;
+    const roles = currentUser.roles?.join(', ') || '';
+    $('#current-user-info').text(`${currentUser.fullName || currentUser.employeeNumber} (${roles})`);
+    $('#logout-btn').show();
+}
+
+function applyPermissions() {
+    $('#add-detail-btn').toggle(canWriteDetails());
+    $('#add-equipment-btn').toggle(canWriteEquipment());
+    $('#add-shift-btn').toggle(canWriteShifts());
+    $('#add-workplace-btn, #add-operation-btn, #add-material-btn, #add-material-size-btn, #add-role-btn, #add-person-btn, #add-reconfiguration-btn').toggle(isAdmin());
+    $('#add-receipt-btn, #add-consumption-btn').toggle(isAdmin());
+    $('#autofill-equipment-timesheet').toggle(isAdmin());
+}
+
+function onLoginSuccess() {
+    hideLoginOverlay();
+    updateUserHeader();
+    applyPermissions();
+    startAppData();
+}
+
+function startAppData() {
     loadDashboardStats();
     loadRecentActivity();
     initializeExportButtons();
-    
-    // Загружаем все справочники при инициализации
+
+    loadRoles();
     loadDetails();
     loadEquipment();
     loadWorkplaces();
@@ -33,22 +157,19 @@ $(document).ready(function() {
     loadMaterialSizes();
     loadPeople();
     loadReconfigurations();
-    
-    // Инициализируем табель рабочего времени
+
     const today = new Date();
     const monthStr = String(today.getMonth() + 1).padStart(2, '0');
     $('#timesheet-month').val(`${today.getFullYear()}-${monthStr}`);
     loadTimeSheet();
-    
-    // Инициализируем табель станков
+
     const today2 = new Date();
     const monthStr2 = String(today2.getMonth() + 1).padStart(2, '0');
     $('#equipment-timesheet-month').val(`${today2.getFullYear()}-${monthStr2}`);
     loadEquipmentTimeSheet();
-    
-    // Инициализируем учёт материалов
+
     initializeInventory();
-});
+}
 
 // Инициализация приложения
 function initializeApp() {
@@ -73,6 +194,7 @@ function initializeApp() {
     $('#add-operation-btn').click(() => showOperationModal());
     $('#add-material-btn').click(() => showMaterialModal());
     $('#add-material-size-btn').click(() => showMaterialSizeModal());
+    $('#add-role-btn').click(() => showRoleModal());
     $('#add-person-btn').click(() => showPersonModal());
     $('#add-reconfiguration-btn').click(() => showReconfigurationModal());
     
@@ -348,6 +470,10 @@ function initializeExportButtons() {
         exportMaterialsToWord();
     });
     
+    // Роли
+    $('#export-roles-excel').click(() => exportToExcel('roles', 'Роли'));
+    $('#export-roles-word').click(() => exportToWord('roles', 'Роли'));
+    
     // Сотрудники
     $('#export-people-excel').click(() => exportToExcel('people', 'Сотрудники'));
     $('#export-people-word').click(() => exportToWord('people', 'Сотрудники'));
@@ -378,6 +504,9 @@ function exportToExcel(tableType, fileName) {
             break;
         case 'operations':
             data = cachedData.operations;
+            break;
+        case 'roles':
+            data = cachedData.roles;
             break;
         case 'people':
             data = cachedData.people;
@@ -425,6 +554,10 @@ function exportToWord(tableType, title) {
         case 'operations':
             data = cachedData.operations;
             headers = ['ID', 'Оборудование', 'Деталь', 'План', 'Выполнено', 'Статус', 'Начало', 'Окончание'];
+            break;
+        case 'roles':
+            data = cachedData.roles;
+            headers = ['ID', 'Название', 'Описание', 'Дата создания'];
             break;
         case 'people':
             data = cachedData.people;
@@ -980,7 +1113,8 @@ async function apiRequest(method, endpoint, data = null) {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            credentials: 'include'
         };
         
         if (data) {
@@ -988,6 +1122,17 @@ async function apiRequest(method, endpoint, data = null) {
         }
         
         const response = await fetch(url, config);
+
+        if (response.status === 401) {
+            currentUser = null;
+            showLoginOverlay();
+            throw new Error('Требуется авторизация');
+        }
+
+        if (response.status === 403) {
+            showNotification('Недостаточно прав для этого действия', 'error');
+            throw new Error('Недостаточно прав');
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1109,6 +1254,7 @@ function formatTimeAgo(dateString) {
     }
 }
 
+
 // Детали
 async function loadDetails() {
     try {
@@ -1155,12 +1301,7 @@ function renderDetailsTable(details) {
                 <button class="btn-icon btn-view" onclick="viewDetail(${detail.detailID})">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn-icon btn-edit" onclick="editDetail(${detail.detailID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteDetail(${detail.detailID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editDetail(${detail.detailID})`, `deleteDetail(${detail.detailID})`, canWriteDetails())}
             </td>
         </tr>
     `).join('');
@@ -1285,12 +1426,7 @@ function showDetailOperationsPanel(detail, operations) {
             <td>${op.reconfigurationTime || '-'}</td>
             <td>${op.setupPercentage || '-'}%</td>
             <td class="actions">
-                <button class="btn-icon btn-edit" onclick="editDetailOperation(${detail.detailID}, ${op.detailOperationID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteDetailOperation(${detail.detailID}, ${op.detailOperationID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editDetailOperation(${detail.detailID}, ${op.detailOperationID})`, `deleteDetailOperation(${detail.detailID}, ${op.detailOperationID})`, canWriteDetails())}
             </td>
         </tr>
     `).join('');
@@ -1299,9 +1435,9 @@ function showDetailOperationsPanel(detail, operations) {
         <div class="detail-operations-panel">
             <div class="panel-header">
                 <h3>Операции для детали: <strong>${detail.detailName}</strong></h3>
-                <button class="btn btn-primary btn-sm" onclick="showDetailOperationModal(${detail.detailID})">
+                ${canWriteDetails() ? `<button class="btn btn-primary btn-sm" onclick="showDetailOperationModal(${detail.detailID})">
                     <i class="fas fa-plus"></i> Добавить операцию
-                </button>
+                </button>` : ''}
             </div>
             
             <div class="table-container">
@@ -1523,12 +1659,7 @@ function renderEquipmentTable(equipment) {
                 <button class="btn-icon btn-view" onclick="viewEquipment(${eq.equipmentID})">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn-icon btn-edit" onclick="editEquipment(${eq.equipmentID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteEquipment(${eq.equipmentID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editEquipment(${eq.equipmentID})`, `deleteEquipment(${eq.equipmentID})`, canWriteEquipment())}
              </td>
          </tr>
     `).join('');
@@ -1686,12 +1817,7 @@ function renderWorkplacesTable(workplaces) {
                 <button class="btn-icon btn-view" onclick="viewWorkplace(${wp.workPlaceID})">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn-icon btn-edit" onclick="editWorkplace(${wp.workPlaceID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteWorkplace(${wp.workPlaceID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editWorkplace(${wp.workPlaceID})`, `deleteWorkplace(${wp.workPlaceID})`, isAdmin())}
             </td>
         </tr>
     `).join('');
@@ -1814,9 +1940,9 @@ function renderShiftsTable(shifts) {
     if (!shifts || shifts.length === 0) {
         tbody.html(`
             <tr>
-                <td colspan="8" class="empty-state">
+                <td colspan="10" class="empty-state">
                     <i class="fas fa-calendar-alt"></i>
-                    <p>Нет данных о сменах</p>
+                    <p>Нет данных о заданиях</p>
                 </td>
             </tr>
         `);
@@ -1845,20 +1971,17 @@ function renderShiftsTable(shifts) {
             <td>${shift.shiftWorkLogID}</td>
             <td>${new Date(shift.workDate).toLocaleDateString('ru-RU')}</td>
             <td><span class="badge badge-info">Смена ${shift.shiftNumber}</span></td>
-            <td>${shift.master?.fullName || 'Не назначен'}</td>
-            <td>${shift.setupPeopleCount || 0}</td>
-            <td>${shift.equipmentsCount || 0}</td>
-            <td>${shift.notes ? shift.notes.substring(0, 50) + '...' : '-'}</td>
+            <td>${shift.master?.fullName || '-'}</td>
+            <td>${shift.worker?.fullName || '-'}</td>
+            <td>${shift.detail?.detailName || '-'}</td>
+            <td>${shift.quantity || '-'}</td>
+            <td>${shift.material?.materialName || '-'}</td>
+            <td>${shift.worker?.workPlace?.name || '-'}</td>
             <td class="actions">
                 <button class="btn-icon btn-view" onclick="viewShift(${shift.shiftWorkLogID})">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn-icon btn-edit" onclick="editShift(${shift.shiftWorkLogID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteShift(${shift.shiftWorkLogID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editShift(${shift.shiftWorkLogID})`, `deleteShift(${shift.shiftWorkLogID})`, canWriteShifts())}
             </td>
         </tr>
     `).join('');
@@ -1868,22 +1991,38 @@ function renderShiftsTable(shifts) {
 
 function showShiftModal(shift = null) {
     const isEdit = shift !== null;
-    const title = isEdit ? 'Редактировать смену' : 'Добавить смену';
+    const title = isEdit ? 'Редактировать задание' : 'Добавить задание';
     
     Promise.all([
         apiRequest('GET', 'People'),
-        apiRequest('GET', 'Equipment'),
-        apiRequest('GET', 'People').then(people => 
-            people.filter(p => p.role === 'Наладчик')
-        )
-    ]).then(([allPeople, equipment, setupPeople]) => {
+        apiRequest('GET', 'Detail'),
+        apiRequest('GET', 'Materials'),
+        apiRequest('GET', 'Equipment')
+    ]).then(([allPeople, details, materials, equipment]) => {
         
-        const masterOptions = allPeople?.filter(p => p.role === 'Мастер' && p.isActive)
+        // Фильтруем людей по ролям (мастеров и рабочих)
+        const masterOptions = allPeople?.filter(p => 
+            p.personRoles?.some(pr => pr.role?.roleName === "Мастер") && p.isActive // RoleID 3 = Мастер
+        ).map(person => `
+            <option value="${person.personID}" ${shift?.masterID === person.personID ? 'selected' : ''}>
+                ${person.fullName}
+            </option>
+        `).join('');
+        
+        const workerOptions = allPeople?.filter(p => p.isActive)
             .map(person => `
-                <option value="${person.personID}" ${shift?.masterID === person.personID ? 'selected' : ''}>
+                <option value="${person.personID}" ${shift?.workerID === person.personID ? 'selected' : ''}>
                     ${person.fullName}
                 </option>
             `).join('');
+        
+        const detailOptions = details?.map(detail => `
+            <option value="${detail.detailID}" ${shift?.detailID === detail.detailID ? 'selected' : ''}>${detail.detailName}</option>
+        `).join('');
+        
+        const materialOptions = materials?.map(material => `
+            <option value="${material.materialID}" ${shift?.materialID === material.materialID ? 'selected' : ''}>${material.materialName}</option>
+        `).join('');
         
         const equipmentOptions = equipment?.map(eq => `
             <option value="${eq.equipmentID}">
@@ -1891,14 +2030,12 @@ function showShiftModal(shift = null) {
             </option>
         `).join('');
         
-        const setupPeopleOptions = setupPeople?.map(person => `
-            <option value="${person.personID}">
-                ${person.fullName}
-            </option>
-        `).join('');
-        
         const selectedEquipment = shift?.equipments?.map(e => e.equipmentID) || [];
-        const selectedSetupPeople = shift?.setupPeople?.map(p => p.personID) || [];
+        
+        // Получаем информацию о рабочем месте выбранного рабочего
+        const workerWorkPlace = shift?.worker?.workPlace;
+        const workerWorkPlaceEquipment = workerWorkPlace ? 
+            equipment?.filter(eq => eq.workPlaceID === workerWorkPlace.workPlaceID) : [];
         
         const content = `
             <form id="shift-form">
@@ -1923,7 +2060,7 @@ function showShiftModal(shift = null) {
                 </div>
                 
                 <div class="form-group">
-                    <label for="master-id">Мастер *</label>
+                    <label for="master-id">Мастер (выдал задание) *</label>
                     <select id="master-id" class="form-control" required>
                         <option value="">Выберите мастера</option>
                         ${masterOptions}
@@ -1931,19 +2068,54 @@ function showShiftModal(shift = null) {
                 </div>
                 
                 <div class="form-group">
-                    <label for="setup-people">Наладчики</label>
-                    <select id="setup-people" class="form-control" multiple size="5">
-                        ${setupPeopleOptions}
+                    <label for="worker-id">Рабочий (кому выдано) *</label>
+                    <select id="worker-id" class="form-control" required>
+                        <option value="">Выберите рабочего</option>
+                        ${workerOptions}
                     </select>
-                    <small class="form-text">Удерживайте Ctrl для выбора нескольких наладчиков</small>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="workplace-info">Рабочее место</label>
+                        <div id="workplace-info" class="form-control" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 8px; cursor: default;">
+                            ${workerWorkPlace ? `<strong>${workerWorkPlace.name}</strong>` : '<span style="color: #999;">-</span>'}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workplace-equipment">Станки участка</label>
+                        <div id="workplace-equipment" style="background-color: #f5f5f5; border: 1px solid #ddd; padding: 8px; min-height: 30px; border-radius: 4px;">
+                            ${workerWorkPlaceEquipment.length > 0 
+                                ? workerWorkPlaceEquipment.map(eq => `<span class="badge badge-info" style="margin-right: 5px;">${eq.equipmentName}</span>`).join('')
+                                : '<span style="color: #999;">-</span>'
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="detail-id">Деталь *</label>
+                        <select id="detail-id" class="form-control" required>
+                            <option value="">Выберите деталь</option>
+                            ${detailOptions}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quantity">Количество *</label>
+                        <input type="number" id="quantity" class="form-control" 
+                               value="${shift?.quantity || ''}" min="1" required>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="equipment">Оборудование в смене</label>
-                    <select id="equipment" class="form-control" multiple size="5">
-                        ${equipmentOptions}
+                    <label for="material-id">Материал</label>
+                    <select id="material-id" class="form-control">
+                        <option value="">Выберите материал</option>
+                        ${materialOptions}
                     </select>
-                    <small class="form-text">Удерживайте Ctrl для выбора нескольких станков</small>
                 </div>
                 
                 <div class="form-group">
@@ -1964,13 +2136,44 @@ function showShiftModal(shift = null) {
         
         showModal(title, content);
         
-        // Устанавливаем предварительно выбранные значения
+        // Обработчик изменения рабочего для подтягивания места и станков
+        $('#worker-id').change(function() {
+            const workerId = $(this).val();
+            if (workerId) {
+                const worker = allPeople.find(p => p.personID === parseInt(workerId));
+                const workPlace = worker?.workPlace;
+                const wpEquipment = workPlace ? 
+                    equipment.filter(eq => eq.workPlaceID === workPlace.workPlaceID) : [];
+                
+                if (workPlace) {
+                    $('#workplace-info').html(`<strong>${workPlace.name}</strong>`);
+                    $('#workplace-equipment').html(
+                        wpEquipment.length > 0 
+                            ? wpEquipment.map(eq => `<span class="badge badge-info" style="margin-right: 5px;">${eq.equipmentName}</span>`).join('')
+                            : '<span style="color: #999;">-</span>'
+                    );
+                } else {
+                    $('#workplace-info').html('<span style="color: #999;">-</span>');
+                    $('#workplace-equipment').html('<span style="color: #999;">-</span>');
+                }
+            }
+        });
+        
+        // Обработчик изменения детали для автоматического выбора материала
+        $('#detail-id').change(function() {
+            const detailId = $(this).val();
+            if (detailId) {
+                const selectedDetail = details.find(d => d.detailID === parseInt(detailId));
+                if (selectedDetail && selectedDetail.mainMaterial) {
+                    $('#material-id').val(selectedDetail.mainMaterial);
+                }
+            }
+        });
+        
+        // Предварительный выбор оборудования
         setTimeout(() => {
             selectedEquipment.forEach(id => {
                 $(`#equipment option[value="${id}"]`).prop('selected', true);
-            });
-            selectedSetupPeople.forEach(id => {
-                $(`#setup-people option[value="${id}"]`).prop('selected', true);
             });
         }, 100);
         
@@ -1982,6 +2185,10 @@ function showShiftModal(shift = null) {
                 workDate: $('#work-date').val(),
                 shiftNumber: parseInt($('#shift-number').val()),
                 masterID: parseInt($('#master-id').val()),
+                workerID: parseInt($('#worker-id').val()) || null,
+                detailID: parseInt($('#detail-id').val()) || null,
+                quantity: parseInt($('#quantity').val()) || null,
+                materialID: parseInt($('#material-id').val()) || null,
                 notes: $('#shift-notes').val() || null
             };
             
@@ -1990,31 +2197,29 @@ function showShiftModal(shift = null) {
                 
                 if (isEdit) {
                     savedShift = await apiRequest('PUT', `ShiftWorkLog/${shiftData.shiftWorkLogID}`, shiftData);
-                    showNotification('Смена успешно обновлена', 'success');
+                    showNotification('Задание успешно обновлено', 'success');
                 } else {
                     savedShift = await apiRequest('POST', 'ShiftWorkLog', shiftData);
-                    showNotification('Смена успешно создана', 'success');
+                    showNotification('Задание успешно создано', 'success');
                 }
-                
-                const selectedEquipmentIds = $('#equipment').val() || [];
-                await manageShiftEquipment(savedShift.shiftWorkLogID, selectedEquipmentIds);
-                
-                const selectedSetupPeopleIds = $('#setup-people').val() || [];
-                await manageShiftSetupPeople(savedShift.shiftWorkLogID, selectedSetupPeopleIds);
                 
                 closeModal();
                 loadShifts();
                 loadRecentActivity();
                 
             } catch (error) {
-                showNotification('Ошибка при сохранении смены', 'error');
+                showNotification('Ошибка при сохранении задания', 'error');
+                console.error(error);
             }
         });
         
     }).catch(error => {
         showNotification('Ошибка при загрузке данных', 'error');
+        console.error(error);
     });
 }
+        
+       
 
 async function manageShiftEquipment(shiftId, equipmentIds) {
     try {
@@ -2148,12 +2353,7 @@ function renderOperationsTable(operations) {
                 </span>
             </td>
             <td class="actions">
-                <button class="btn-icon btn-edit" onclick="editOperation(${op.operationID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteOperation(${op.operationID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editOperation(${op.operationID})`, `deleteOperation(${op.operationID})`, isAdmin())}
             </td>
         </tr>
     `).join('');
@@ -2491,12 +2691,7 @@ function renderMaterialsTable(materials) {
                 ).join(', ') || '-'}
             </td>
             <td class="actions">
-                <button class="btn-icon btn-edit" onclick="editMaterial(${material.materialID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteMaterial(${material.materialID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editMaterial(${material.materialID})`, `deleteMaterial(${material.materialID})`, isAdmin())}
             </td>
         </tr>
     `).join('');
@@ -2625,12 +2820,7 @@ function renderMaterialSizesTable(sizes) {
             <td>${size.unit}</td>
             <td>${size.materialMaterialSizes?.length || 0}</td>
             <td class="actions">
-                <button class="btn-icon btn-edit" onclick="editMaterialSize(${size.materialSizeID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteMaterialSize(${size.materialSizeID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editMaterialSize(${size.materialSizeID})`, `deleteMaterialSize(${size.materialSizeID})`, isAdmin())}
             </td>
         </tr>
     `).join('');
@@ -2729,7 +2919,7 @@ async function loadPeople() {
     } catch (error) {
         $('#people-table-body').html(`
             <tr>
-                <td colspan="7" class="empty-state">
+                <td colspan="8" class="empty-state">
                     <i class="fas fa-exclamation-circle"></i>
                     <p>Не удалось загрузить данные</p>
                                 </td>
@@ -2745,7 +2935,7 @@ function renderPeopleTable(people) {
     if (!people || people.length === 0) {
         tbody.html(`
             <tr>
-                <td colspan="7" class="empty-state">
+                <td colspan="8" class="empty-state">
                     <i class="fas fa-users"></i>
                     <p>Нет данных о сотрудниках</p>
                 </td>
@@ -2761,7 +2951,11 @@ function renderPeopleTable(people) {
     let filteredPeople = people;
     
     if (roleFilter) {
-        filteredPeople = filteredPeople.filter(person => person.role === roleFilter);
+        filteredPeople = filteredPeople.filter(person => {
+            // Проверяем есть ли роль в personRoles
+            if (!person.personRoles) return false;
+            return person.personRoles.some(pr => pr.role?.roleID?.toString() === roleFilter);
+        });
     }
     
     if (statusFilter) {
@@ -2770,33 +2964,36 @@ function renderPeopleTable(people) {
         );
     }
     
-    const rows = filteredPeople.map(person => `
+    const rows = filteredPeople.map(person => {
+        // Получаем все роли сотрудника
+        const rolesArray = person.personRoles?.map(pr => pr.role?.roleName).filter(r => r) || [];
+        const rolesHtml = rolesArray.length > 0 
+            ? rolesArray.map(roleName => {
+                const badgeColor = roleName === 'Мастер' ? 'badge-info' : 
+                                  roleName === 'Технолог' ? 'badge-warning' : 
+                                  roleName === 'Админ' ? 'badge-danger' : 'badge-success';
+                return `<span class="badge ${badgeColor}">${roleName}</span>`;
+            }).join(' ')
+            : '-';
+        
+        return `
         <tr>
             <td>${person.personID}</td>
             <td><strong>${person.employeeNumber || '-'}</strong></td>
             <td><strong>${person.fullName}</strong></td>
-            <td>
-                <span class="badge ${person.role === 'Мастер' ? 'badge-info' : 
-                                   person.role === 'Наладчик' ? 'badge-warning' : 'badge-success'}">
-                    ${person.role}
-                </span>
-            </td>
+            <td>${rolesHtml}</td>
             <td>
                 <span class="badge ${person.isActive ? 'badge-success' : 'badge-danger'}">
                     ${person.isActive ? 'Активен' : 'Неактивен'}
                 </span>
             </td>
+            <td>${person.workPlace?.name || '-'}</td>
             <td>${person.shiftLogsCount || 0}</td>
             <td class="actions">
-                <button class="btn-icon btn-edit" onclick="editPerson(${person.personID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deletePerson(${person.personID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editPerson(${person.personID})`, `deletePerson(${person.personID})`, isAdmin())}
             </td>
         </tr>
-    `).join('');
+    `}).join('');
     
     tbody.html(rows);
 }
@@ -2804,6 +3001,28 @@ function renderPeopleTable(people) {
 function showPersonModal(person = null) {
     const isEdit = person !== null;
     const title = isEdit ? 'Редактировать сотрудника' : 'Добавить сотрудника';
+    
+    // Получаем текущие роли сотрудника (если редактируем)
+    const currentRoleIds = person?.personRoles?.map(pr => pr.roleID) || [];
+    
+    // Создаём checkboxes для ролей
+    const rolesCheckboxes = cachedData.roles?.map(role => {
+        const isChecked = currentRoleIds.includes(role.roleID) ? 'checked' : '';
+        return `
+            <div class="checkbox-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" class="role-checkbox" value="${role.roleID}" ${isChecked}>
+                    ${role.roleName}
+                    ${role.description ? `<small>(${role.description})</small>` : ''}
+                </label>
+            </div>
+        `;
+    }).join('') || '';
+    
+    // Создаём опции для выпадающего списка рабочих мест
+    const workplacesOptions = cachedData.workplaces?.map(wp => 
+        `<option value="${wp.workPlaceID}" ${person?.workPlaceID === wp.workPlaceID ? 'selected' : ''}>${wp.name}</option>`
+    ).join('') || '';
     
     const content = `
         <form id="person-form">
@@ -2822,11 +3041,17 @@ function showPersonModal(person = null) {
             </div>
             
             <div class="form-group">
-                <label for="role">Роль *</label>
-                <select id="role" class="form-control" required>
-                    <option value="Мастер" ${person?.role === 'Мастер' ? 'selected' : ''}>Мастер</option>
-                    <option value="Наладчик" ${person?.role === 'Наладчик' ? 'selected' : ''}>Наладчик</option>
-                    <option value="Оператор" ${person?.role === 'Оператор' ? 'selected' : ''}>Оператор</option>
+                <label>Роли *</label>
+                <div class="roles-checkboxes">
+                    ${rolesCheckboxes}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="workplace-id">Рабочее место</label>
+                <select id="workplace-id" class="form-control">
+                    <option value="">-- Не выбрано --</option>
+                    ${workplacesOptions}
                 </select>
             </div>
             
@@ -2853,20 +3078,49 @@ function showPersonModal(person = null) {
     $('#person-form').submit(async function(e) {
         e.preventDefault();
         
+        const workplaceId = $('#workplace-id').val();
+        const personId = $('#person-id').val() || 0;
+        const selectedRoleIds = [];
+        $('.role-checkbox:checked').each(function() {
+            selectedRoleIds.push(parseInt($(this).val()));
+        });
+        
+        // Проверяем, что выбрана хотя бы одна роль
+        if (selectedRoleIds.length === 0) {
+            showNotification('Пожалуйста, выберите хотя бы одну роль', 'warning');
+            return;
+        }
+        
         const personData = {
-            personID: $('#person-id').val() || 0,
+            personID: personId,
             employeeNumber: $('#employee-number').val(),
             fullName: $('#full-name').val(),
-            role: $('#role').val(),
+            workPlaceID: workplaceId ? parseInt(workplaceId) : null,
             isActive: $('#is-active').is(':checked')
         };
         
         try {
             if (isEdit) {
+                // Обновляем основные данные
                 await apiRequest('PUT', `People/${personData.personID}`, personData);
+                
+                // Синхронизируем роли
+                await syncPersonRoles(personData.personID, selectedRoleIds);
+                
                 showNotification('Сотрудник успешно обновлён', 'success');
             } else {
-                await apiRequest('POST', 'People', personData);
+                // Создаём нового сотрудника
+                const response = await apiRequest('POST', 'People', personData);
+                const newPersonId = response.personID;
+                
+                // Добавляем роли
+                for (const roleId of selectedRoleIds) {
+                    await apiRequest('POST', 'PersonRoles', {
+                        personID: newPersonId,
+                        roleID: roleId
+                    });
+                }
+                
                 showNotification('Сотрудник успешно создан', 'success');
             }
             
@@ -2875,8 +3129,38 @@ function showPersonModal(person = null) {
             loadDashboardStats();
         } catch (error) {
             showNotification('Ошибка при сохранении сотрудника', 'error');
+            console.error(error);
         }
     });
+}
+
+// Синхронизирует роли сотрудника
+async function syncPersonRoles(personId, selectedRoleIds) {
+    try {
+        // Получаем текущие роли
+        const personRoles = await apiRequest('GET', `PersonRoles/ByPerson/${personId}`);
+        const currentRoleIds = personRoles.map(pr => pr.roleID);
+        
+        // Удаляем роли, которые были, но нет в выборе
+        for (const roleId of currentRoleIds) {
+            if (!selectedRoleIds.includes(roleId)) {
+                await apiRequest('DELETE', `PersonRoles/RemoveByPersonAndRole/${personId}/${roleId}`);
+            }
+        }
+        
+        // Добавляем новые роли
+        for (const roleId of selectedRoleIds) {
+            if (!currentRoleIds.includes(roleId)) {
+                await apiRequest('POST', 'PersonRoles', {
+                    personID: personId,
+                    roleID: roleId
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Ошибка при синхронизации ролей:', error);
+        throw error;
+    }
 }
 
 async function editPerson(id) {
@@ -2898,6 +3182,133 @@ async function deletePerson(id) {
         loadDashboardStats();
     } catch (error) {
         showNotification('Ошибка при удалении сотрудника', 'error');
+    }
+}
+
+// ===== УПРАВЛЕНИЕ РОЛЯМИ =====
+async function loadRoles() {
+    try {
+        const roles = await apiRequest('GET', 'Roles');
+        cachedData.roles = roles || [];
+        renderRolesTable(roles);
+    } catch (error) {
+        console.error('Ошибка загрузки ролей:', error);
+        cachedData.roles = [];
+        renderRolesTable([]);
+    }
+}
+
+function renderRolesTable(roles) {
+    const tbody = $('#roles-table-body');
+    
+    if (!roles || roles.length === 0) {
+        tbody.html(`
+            <tr>
+                <td colspan="5" class="empty-state">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Нет данных о ролях</p>
+                </td>
+            </tr>
+        `);
+        return;
+    }
+    
+    const rows = roles.map(role => {
+        const createdAt = role.createdAt ? new Date(role.createdAt).toLocaleDateString('ru-RU') : '-';
+        return `
+        <tr>
+            <td>${role.roleID}</td>
+            <td><strong>${role.roleName}</strong></td>
+            <td>${role.description || '-'}</td>
+            <td>${createdAt}</td>
+            <td class="actions">
+                ${editDeleteButtons(`editRole(${role.roleID})`, `deleteRole(${role.roleID})`, isAdmin())}
+            </td>
+        </tr>
+    `}).join('');
+    
+    tbody.html(rows);
+}
+
+function showRoleModal(role = null) {
+    const isEdit = role !== null;
+    const title = isEdit ? 'Редактировать роль' : 'Добавить роль';
+    
+    const content = `
+        <form id="role-form">
+            <input type="hidden" id="role-id" value="${role?.roleID || ''}">
+            
+            <div class="form-group">
+                <label for="role-name">Название роли *</label>
+                <input type="text" id="role-name" class="form-control" 
+                       value="${role?.roleName || ''}" required placeholder="Например: Мастер">
+            </div>
+            
+            <div class="form-group">
+                <label for="role-description">Описание</label>
+                <textarea id="role-description" class="form-control" rows="3"
+                          placeholder="Описание роли">${role?.description || ''}</textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    Отмена
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    ${isEdit ? 'Сохранить' : 'Создать'}
+                </button>
+            </div>
+        </form>
+    `;
+    
+    showModal(title, content);
+    
+    $('#role-form').submit(async function(e) {
+        e.preventDefault();
+        
+        const roleData = {
+            roleID: $('#role-id').val() || 0,
+            roleName: $('#role-name').val(),
+            description: $('#role-description').val() || null
+        };
+        
+        try {
+            if (isEdit) {
+                await apiRequest('PUT', `Roles/${roleData.roleID}`, roleData);
+                showNotification('Роль успешно обновлена', 'success');
+            } else {
+                await apiRequest('POST', 'Roles', roleData);
+                showNotification('Роль успешно создана', 'success');
+            }
+            
+            closeModal();
+            loadRoles();
+        } catch (error) {
+            showNotification('Ошибка при сохранении роли', 'error');
+            console.error(error);
+        }
+    });
+}
+
+async function editRole(id) {
+    try {
+        const role = await apiRequest('GET', `Roles/${id}`);
+        showRoleModal(role);
+    } catch (error) {
+        showNotification('Не удалось загрузить роль', 'error');
+    }
+}
+
+async function deleteRole(id) {
+    if (!confirm('Вы уверены, что хотите удалить эту роль? Это может затронуть сотрудников с этой ролью.')) return;
+    
+    try {
+        await apiRequest('DELETE', `Roles/${id}`);
+        showNotification('Роль успешно удалена', 'success');
+        loadRoles();
+        loadPeople(); // Перезагружаем людей, т.к. их роли могут изменились
+    } catch (error) {
+        showNotification('Ошибка при удалении роли', 'error');
     }
 }
 
@@ -2944,12 +3355,7 @@ function renderReconfigurationsTable(reconfigurations) {
             <td>${reconfiguration.reconfigurationMinutes || 0}</td>
             <td>${reconfiguration.notes || '-'}</td>
             <td class="actions">
-                <button class="btn-icon btn-edit" onclick="editReconfiguration(${reconfiguration.reconfigurationID})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" onclick="deleteReconfiguration(${reconfiguration.reconfigurationID})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${editDeleteButtons(`editReconfiguration(${reconfiguration.reconfigurationID})`, `deleteReconfiguration(${reconfiguration.reconfigurationID})`, isAdmin())}
             </td>
         </tr>
     `).join('');
@@ -3289,11 +3695,11 @@ function buildTimesheetTable(people, groupedData, startDate) {
             
             // Содержимое для смены 1я
             let cellContent1 = ts1 ? formatTimesheetCell(ts1) : '';
-            row1 += `<td class="timesheet-cell editable" data-personid="${person.personID}" data-shift="1я" data-day="${day}" data-tsid="${ts1?.timeSheetID || ''}">${cellContent1}</td>`;
+            row1 += `<td class="timesheet-cell${isAdmin() ? ' editable' : ''}" data-personid="${person.personID}" data-shift="1я" data-day="${day}" data-tsid="${ts1?.timeSheetID || ''}">${cellContent1}</td>`;
             
             // Содержимое для смены 2я
             let cellContent2 = ts2 ? formatTimesheetCell(ts2) : '';
-            row2 += `<td class="timesheet-cell editable" data-personid="${person.personID}" data-shift="2я" data-day="${day}" data-tsid="${ts2?.timeSheetID || ''}">${cellContent2}</td>`;
+            row2 += `<td class="timesheet-cell${isAdmin() ? ' editable' : ''}" data-personid="${person.personID}" data-shift="2я" data-day="${day}" data-tsid="${ts2?.timeSheetID || ''}">${cellContent2}</td>`;
         }
         
         // Добавляем итоговые ячейки (только на первую строку)
@@ -3837,11 +4243,11 @@ function buildEquipmentTimesheetTable(equipment, groupedData, startDate) {
             
             // Содержимое для смены 1я
             let cellContent1 = ts1 ? formatEquipmentTimesheetCell(ts1) : '';
-            row1 += `<td class="equipment-timesheet-cell editable" data-equipmentid="${eq.equipmentID}" data-shift="1я" data-day="${day}" data-etsid="${ts1?.equipmentTimeSheetID || ''}">${cellContent1}</td>`;
+            row1 += `<td class="equipment-timesheet-cell${isAdmin() ? ' editable' : ''}" data-equipmentid="${eq.equipmentID}" data-shift="1я" data-day="${day}" data-etsid="${ts1?.equipmentTimeSheetID || ''}">${cellContent1}</td>`;
             
             // Содержимое для смены 2я
             let cellContent2 = ts2 ? formatEquipmentTimesheetCell(ts2) : '';
-            row2 += `<td class="equipment-timesheet-cell editable" data-equipmentid="${eq.equipmentID}" data-shift="2я" data-day="${day}" data-etsid="${ts2?.equipmentTimeSheetID || ''}">${cellContent2}</td>`;
+            row2 += `<td class="equipment-timesheet-cell${isAdmin() ? ' editable' : ''}" data-equipmentid="${eq.equipmentID}" data-shift="2я" data-day="${day}" data-etsid="${ts2?.equipmentTimeSheetID || ''}">${cellContent2}</td>`;
         }
         
         // Добавляем итоговые ячейки

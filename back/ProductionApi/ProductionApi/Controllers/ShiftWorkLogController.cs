@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
@@ -22,6 +24,12 @@ namespace ProductionApi.Controllers
         {
             return await _context.ShiftWorkLogs
                 .Include(swl => swl.Master)
+                    .ThenInclude(m => m.PersonRoles)
+                    .ThenInclude(pr => pr.Role)
+                .Include(swl => swl.Worker)
+                    .ThenInclude(w => w.WorkPlace)
+                .Include(swl => swl.Detail)
+                .Include(swl => swl.Material)
                 .Select(swl => new
                 {
                     swl.ShiftWorkLogID,
@@ -32,7 +40,35 @@ namespace ProductionApi.Controllers
                     {
                         swl.Master.PersonID,
                         swl.Master.FullName,
-                        swl.Master.Role
+                        Roles = swl.Master.PersonRoles.Select(pr => new
+                        {
+                            pr.Role.RoleID,
+                            pr.Role.RoleName
+                        }).ToList()
+                    } : null,
+                    swl.WorkerID,
+                    Worker = swl.Worker != null ? new
+                    {
+                        swl.Worker.PersonID,
+                        swl.Worker.FullName,
+                        WorkPlace = swl.Worker.WorkPlace != null ? new
+                        {
+                            swl.Worker.WorkPlace.WorkPlaceID,
+                            swl.Worker.WorkPlace.Name
+                        } : null
+                    } : null,
+                    swl.DetailID,
+                    Detail = swl.Detail != null ? new
+                    {
+                        swl.Detail.DetailID,
+                        swl.Detail.DetailName
+                    } : null,
+                    swl.Quantity,
+                    swl.MaterialID,
+                    Material = swl.Material != null ? new
+                    {
+                        swl.Material.MaterialID,
+                        swl.Material.MaterialName
                     } : null,
                     SetupPeopleCount = swl.SetupPeople != null ? swl.SetupPeople.Count : 0,
                     EquipmentCount = swl.Equipments != null ? swl.Equipments.Count : 0,
@@ -47,8 +83,16 @@ namespace ProductionApi.Controllers
         {
             var log = await _context.ShiftWorkLogs
                 .Include(swl => swl.Master)
+                    .ThenInclude(m => m.PersonRoles)
+                    .ThenInclude(pr => pr.Role)
+                .Include(swl => swl.Worker)
+                    .ThenInclude(w => w.WorkPlace)
+                .Include(swl => swl.Detail)
+                .Include(swl => swl.Material)
                 .Include(swl => swl.SetupPeople)
                     .ThenInclude(sp => sp.Person)
+                    .ThenInclude(p => p.PersonRoles)
+                    .ThenInclude(pr => pr.Role)
                 .Include(swl => swl.Equipments)
                     .ThenInclude(se => se.Equipment)
                 .FirstOrDefaultAsync(swl => swl.ShiftWorkLogID == id);
@@ -68,7 +112,35 @@ namespace ProductionApi.Controllers
                 {
                     log.Master.PersonID,
                     log.Master.FullName,
-                    log.Master.Role
+                    Roles = log.Master.PersonRoles.Select(pr => new
+                    {
+                        pr.Role.RoleID,
+                        pr.Role.RoleName
+                    }).ToList()
+                } : null,
+                log.WorkerID,
+                Worker = log.Worker != null ? new
+                {
+                    log.Worker.PersonID,
+                    log.Worker.FullName,
+                    WorkPlace = log.Worker.WorkPlace != null ? new
+                    {
+                        log.Worker.WorkPlace.WorkPlaceID,
+                        log.Worker.WorkPlace.Name
+                    } : null
+                } : null,
+                log.DetailID,
+                Detail = log.Detail != null ? new
+                {
+                    log.Detail.DetailID,
+                    log.Detail.DetailName
+                } : null,
+                log.Quantity,
+                log.MaterialID,
+                Material = log.Material != null ? new
+                {
+                    log.Material.MaterialID,
+                    log.Material.MaterialName
                 } : null,
                 SetupPeople = log.SetupPeople != null ? log.SetupPeople.Select(sp => new
                 {
@@ -77,7 +149,11 @@ namespace ProductionApi.Controllers
                     {
                         sp.Person.PersonID,
                         sp.Person.FullName,
-                        sp.Person.Role
+                        Roles = sp.Person.PersonRoles.Select(pr => new
+                        {
+                            pr.Role.RoleID,
+                            pr.Role.RoleName
+                        }).ToList()
                     } : null
                 }) : null,
                 Equipments = log.Equipments != null ? log.Equipments.Select(se => new
@@ -95,6 +171,7 @@ namespace ProductionApi.Controllers
         }
 
         // POST: api/ShiftWorkLog
+        [Authorize(Policy = AuthorizationPolicies.CanWriteShifts)]
         [HttpPost]
         public async Task<ActionResult<ShiftWorkLog>> CreateShiftWorkLog(ShiftWorkLog log)
         {
@@ -105,6 +182,7 @@ namespace ProductionApi.Controllers
         }
 
         // PUT: api/ShiftWorkLog/5
+        [Authorize(Policy = AuthorizationPolicies.CanWriteShifts)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateShiftWorkLog(int id, ShiftWorkLog log)
         {
@@ -135,6 +213,7 @@ namespace ProductionApi.Controllers
         }
 
         // DELETE: api/ShiftWorkLog/5
+        [Authorize(Policy = AuthorizationPolicies.CanWriteShifts)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShiftWorkLog(int id)
         {

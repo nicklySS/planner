@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using ProductionApi.Auth;
 using ProductionApi.Data;
+using ProductionApi.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +19,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Подключение к SQL Server с настройкой разделения запросов
+//   SQL Server    
 builder.Services.AddDbContext<ProductionDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -23,20 +27,72 @@ builder.Services.AddDbContext<ProductionDbContext>(options =>
     )
 );
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "Planner.Session";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+
+    options.AddPolicy(AuthorizationPolicies.AdminOnly, policy =>
+        policy.RequireRole(RoleNames.Admin));
+
+    options.AddPolicy(AuthorizationPolicies.CanWriteDetails, policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole(RoleNames.Admin) ||
+            context.User.IsInRole(RoleNames.Technologist)));
+
+    options.AddPolicy(AuthorizationPolicies.CanWriteEquipment, policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole(RoleNames.Admin) ||
+            context.User.IsInRole(RoleNames.Technologist)));
+
+    options.AddPolicy(AuthorizationPolicies.CanWriteShifts, policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole(RoleNames.Admin) ||
+            context.User.IsInRole(RoleNames.Master)));
+});
+
+builder.Services.AddSingleton<PasswordService>();
+
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:5500" };
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .WithOrigins(corsOrigins)
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
 var app = builder.Build();
 
-// Автоматическое применение миграций при запуске
+//     
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ProductionDbContext>();
@@ -50,7 +106,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
