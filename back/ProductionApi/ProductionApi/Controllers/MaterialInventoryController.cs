@@ -3,6 +3,7 @@ using ProductionApi.Auth;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Data;
 using ProductionApi.Models;
+using ProductionApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,7 @@ namespace ProductionApi.Controllers
                 Material = stock.Material?.MaterialName,
                 Size = stock.MaterialSize?.SizeValue,
                 Unit = stock.MaterialSize?.Unit,
+                SizeLabel = MaterialStockHelper.FormatSizeLabel(stock.MaterialSize),
                 CurrentQuantity = stock.CurrentQuantity,
                 ReceivedQuantity = stock.ReceivedQuantity,
                 UsedQuantity = stock.UsedQuantity,
@@ -73,6 +75,7 @@ namespace ProductionApi.Controllers
                 Material = stock.Material?.MaterialName,
                 Size = stock.MaterialSize?.SizeValue,
                 Unit = stock.MaterialSize?.Unit,
+                SizeLabel = MaterialStockHelper.FormatSizeLabel(stock.MaterialSize),
                 CurrentQuantity = stock.CurrentQuantity,
                 ReceivedQuantity = stock.ReceivedQuantity,
                 UsedQuantity = stock.UsedQuantity,
@@ -92,9 +95,12 @@ namespace ProductionApi.Controllers
                 .Select(s => new
                 {
                     s.MaterialStockID,
+                    s.MaterialID,
+                    s.MaterialSizeID,
                     Material = s.Material!.MaterialName,
                     Size = s.MaterialSize!.SizeValue,
                     Unit = s.MaterialSize!.Unit,
+                    SizeLabel = MaterialStockHelper.FormatSizeLabel(s.MaterialSize),
                     s.CurrentQuantity,
                     s.ReceivedQuantity,
                     s.UsedQuantity,

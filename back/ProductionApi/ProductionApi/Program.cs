@@ -74,6 +74,8 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddSingleton<PasswordService>();
+builder.Services.AddScoped<ProductionPlanningService>();
+builder.Services.AddScoped<ProductionPlanExecutionService>();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:5500" };

@@ -38,5 +38,9 @@ namespace ProductionApi.Models
         /* Процент на наладку */
         [Column(TypeName = "decimal(5, 2)")]
         public decimal? SetupPercentage { get; set; }
+
+        /* Норма выработки за смену (шт.) */
+        [Range(0, int.MaxValue)]
+        public int? NormPerShift { get; set; }
     }
 }

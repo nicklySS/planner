@@ -693,6 +693,21 @@ body {
     color: #721c24;
 }
 
+.badge-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.hint-text {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 8px 0;
+}
+
+.overdue-row {
+    background-color: #fff5f5;
+}
+
 .badge-info {
     background-color: #d1ecf1;
     color: #0c5460;

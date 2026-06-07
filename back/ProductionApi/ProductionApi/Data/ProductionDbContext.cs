@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Microsoft.EntityFrameworkCore;
 using ProductionApi.Models;
 using System;
@@ -69,6 +69,20 @@ namespace ProductionApi.Data
 
         // 16. Material Transaction (журнал операций)
         public DbSet<MaterialTransaction> MaterialTransactions { get; set; }
+
+        // 17. Detail Stock (склад готовых деталей)
+        public DbSet<DetailStock> DetailStocks { get; set; }
+
+        // 18. Detail Transaction (журнал движения деталей)
+        public DbSet<DetailTransaction> DetailTransactions { get; set; }
+
+        // 19. Monthly production plan
+        public DbSet<MonthlyProductionPlan> MonthlyProductionPlans { get; set; }
+        public DbSet<MonthlyProductionPlanItem> MonthlyProductionPlanItems { get; set; }
+
+        // 20. Generated shift plans
+        public DbSet<GeneratedProductionPlan> GeneratedProductionPlans { get; set; }
+        public DbSet<GeneratedProductionPlanItem> GeneratedProductionPlanItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -259,6 +273,56 @@ namespace ProductionApi.Data
                 .HasOne(mt => mt.MaterialSize)
                 .WithMany()
                 .HasForeignKey(mt => mt.MaterialSizeID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DetailStock>()
+                .HasIndex(ds => ds.DetailID)
+                .IsUnique();
+
+            modelBuilder.Entity<DetailStock>()
+                .HasOne(ds => ds.Detail)
+                .WithMany()
+                .HasForeignKey(ds => ds.DetailID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DetailTransaction>()
+                .HasOne(dt => dt.Detail)
+                .WithMany()
+                .HasForeignKey(dt => dt.DetailID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MonthlyProductionPlan>()
+                .HasIndex(p => new { p.Year, p.Month })
+                .IsUnique();
+
+            modelBuilder.Entity<MonthlyProductionPlanItem>()
+                .HasOne(i => i.Plan)
+                .WithMany(p => p.Items)
+                .HasForeignKey(i => i.PlanID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MonthlyProductionPlanItem>()
+                .HasOne(i => i.Detail)
+                .WithMany()
+                .HasForeignKey(i => i.DetailID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<GeneratedProductionPlanItem>()
+                .HasOne(i => i.GeneratedPlan)
+                .WithMany(p => p.Items)
+                .HasForeignKey(i => i.GeneratedPlanID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GeneratedProductionPlanItem>()
+                .HasOne(i => i.Equipment)
+                .WithMany()
+                .HasForeignKey(i => i.EquipmentID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<GeneratedProductionPlanItem>()
+                .HasOne(i => i.Detail)
+                .WithMany()
+                .HasForeignKey(i => i.DetailID)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

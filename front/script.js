@@ -132,6 +132,8 @@ function applyPermissions() {
     $('#add-shift-btn').toggle(canWriteShifts());
     $('#add-workplace-btn, #add-operation-btn, #add-material-btn, #add-material-size-btn, #add-role-btn, #add-person-btn, #add-reconfiguration-btn').toggle(isAdmin());
     $('#add-receipt-btn, #add-consumption-btn').toggle(isAdmin());
+    $('#add-detail-receipt-btn, #add-detail-shipment-btn').toggle(isAdmin());
+    $('#save-monthly-plan, #add-plan-item-btn, #generate-production-plan, #clear-generated-plan, #confirm-generated-plan, #cancel-generated-plan').toggle(isAdmin());
     $('#autofill-equipment-timesheet').toggle(isAdmin());
 }
 
@@ -223,6 +225,9 @@ function initializeApp() {
     $('#refresh-equipment-timesheet').click(() => loadEquipmentTimeSheet());
     $('#export-equipment-timesheet-excel').click(() => exportEquipmentTimeSheetToExcel());
     $('#autofill-equipment-timesheet').click(() => autoFillEquipmentTimeSheet());
+
+    initWarehouseDetails();
+    initPlanner();
     
     // Загрузка данных при переключении табов
     $(document).on('tabSwitched', function(event, tabId) {
@@ -268,6 +273,12 @@ function initializeApp() {
                 break;
             case 'inventory':
                 switchInventoryTab('stocks');
+                break;
+            case 'warehouse-details':
+                switchWarehouseDetailsTab('stocks');
+                break;
+            case 'planner':
+                switchPlannerTab('monthly');
                 break;
         }
     });
@@ -1425,6 +1436,7 @@ function showDetailOperationsPanel(detail, operations) {
             <td>${op.equipment?.equipmentName || '-'}</td>
             <td>${op.reconfigurationTime || '-'}</td>
             <td>${op.setupPercentage || '-'}%</td>
+            <td>${op.normPerShift || '-'}</td>
             <td class="actions">
                 ${editDeleteButtons(`editDetailOperation(${detail.detailID}, ${op.detailOperationID})`, `deleteDetailOperation(${detail.detailID}, ${op.detailOperationID})`, canWriteDetails())}
             </td>
@@ -1451,11 +1463,12 @@ function showDetailOperationsPanel(detail, operations) {
                             <th>Станок</th>
                             <th>Время переналадки (мин)</th>
                             <th>% на наладку</th>
+                            <th>Норма/смена (шт.)</th>
                             <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${operationsHtml || '<tr><td colspan="8" class="empty-state">Нет операций для этой детали</td></tr>'}
+                        ${operationsHtml || '<tr><td colspan="9" class="empty-state">Нет операций для этой детали</td></tr>'}
                     </tbody>
                 </table>
             </div>
@@ -1526,6 +1539,12 @@ function showDetailOperationModal(detailID, operation = null) {
                        value="${operation?.setupPercentage || ''}">
             </div>
 
+            <div class="form-group">
+                <label for="op-norm-per-shift">Норма выработки за смену (шт.)</label>
+                <input type="number" id="op-norm-per-shift" class="form-control" min="0"
+                       value="${operation?.normPerShift || ''}">
+            </div>
+
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">
                     Отмена
@@ -1550,7 +1569,8 @@ function showDetailOperationModal(detailID, operation = null) {
             operationType: $('#op-type').val() || null,
             sequenceNumber: $('#op-sequence').val() ? parseInt($('#op-sequence').val()) : null,
             reconfigurationTime: $('#op-reconfig-time').val() ? parseInt($('#op-reconfig-time').val()) : null,
-            setupPercentage: $('#op-setup-percent').val() ? parseFloat($('#op-setup-percent').val()) : null
+            setupPercentage: $('#op-setup-percent').val() ? parseFloat($('#op-setup-percent').val()) : null,
+            normPerShift: $('#op-norm-per-shift').val() ? parseInt($('#op-norm-per-shift').val()) : null
         };
 
         try {

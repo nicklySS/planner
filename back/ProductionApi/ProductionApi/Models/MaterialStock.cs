@@ -18,7 +18,7 @@ namespace ProductionApi.Models
         public MaterialSize? MaterialSize { get; set; }
 
         [Required]
-        public decimal CurrentQuantity { get; set; }  // текущий остаток
+        public decimal CurrentQuantity { get; set; }  // остаток в штуках (заготовок данной размерности)
 
         [Required]
         public decimal ReceivedQuantity { get; set; }  // всего получено

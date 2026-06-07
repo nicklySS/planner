@@ -82,15 +82,13 @@ async function loadDetailsForInventory() {
     }
 }
 
-// Переключение табов в разделе материалов
+// Переключение табов в разделе материалов (только внутри #inventory!)
 function switchInventoryTab(tabId) {
-    // Скрываем все табы
-    $('.inventory-tab-content').removeClass('active').hide();
-    $('.tab-btn').removeClass('active');
-    
-    // Показываем выбранный таб
-    $(`#${tabId}-tab`).addClass('active').show();
-    $(`[data-inv-tab="${tabId}"]`).addClass('active');
+    $('#inventory .inventory-tab-content').removeClass('active');
+    $('#inventory .tab-btn[data-inv-tab]').removeClass('active');
+
+    $(`#inventory #${tabId}-tab`).addClass('active');
+    $(`#inventory [data-inv-tab="${tabId}"]`).addClass('active');
     
     // Загружаем данные
     if (tabId === 'stocks') {
