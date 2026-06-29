@@ -15,16 +15,13 @@ namespace ProductionApi.Controllers
     {
         private readonly ProductionDbContext _context;
         private readonly PasswordService _passwordService;
-        private readonly IConfiguration _configuration;
 
         public AuthController(
             ProductionDbContext context,
-            PasswordService passwordService,
-            IConfiguration configuration)
+            PasswordService passwordService)
         {
             _context = context;
             _passwordService = passwordService;
-            _configuration = configuration;
         }
 
         [AllowAnonymous]
@@ -34,21 +31,24 @@ namespace ProductionApi.Controllers
             if (string.IsNullOrWhiteSpace(request.EmployeeNumber) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest(new { message = "Укажите табельный номер и пароль" });
 
-            var person = await _context.People
+            var employeeNumber = request.EmployeeNumber.Trim();
+            var people = await _context.People
                 .Include(p => p.PersonRoles!)
                     .ThenInclude(pr => pr.Role)
-                .FirstOrDefaultAsync(p => p.EmployeeNumber == request.EmployeeNumber.Trim());
+                .Where(p => p.EmployeeNumber != null)
+                .ToListAsync();
+
+            var person = people.FirstOrDefault(p =>
+                string.Equals(p.EmployeeNumber!.Trim(), employeeNumber, StringComparison.OrdinalIgnoreCase));
 
             if (person == null || !person.IsActive)
                 return Unauthorized(new { message = "Неверный табельный номер или пароль" });
 
-            if (string.IsNullOrEmpty(person.PasswordHash))
+            var isFirstLogin = string.IsNullOrWhiteSpace(person.PasswordHash);
+            if (isFirstLogin)
             {
-                var initialPassword = _configuration["Auth:InitialPassword"];
-                if (string.IsNullOrEmpty(initialPassword) || request.Password != initialPassword)
-                    return Unauthorized(new { message = "Неверный табельный номер или пароль" });
-
                 person.PasswordHash = _passwordService.HashPassword(person, request.Password);
+                person.EmployeeNumber = person.EmployeeNumber?.Trim();
                 await _context.SaveChangesAsync();
             }
             else if (!_passwordService.VerifyPassword(person, request.Password, person.PasswordHash))
@@ -91,8 +91,39 @@ namespace ProductionApi.Controllers
                 person.PersonID,
                 person.FullName,
                 person.EmployeeNumber,
-                roles
+                roles,
+                isFirstLogin
             });
+        }
+
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.NewPassword))
+                return BadRequest(new { message = "Укажите новый пароль" });
+
+            var personIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(personIdClaim, out var personId))
+                return Unauthorized();
+
+            var person = await _context.People.FirstOrDefaultAsync(p => p.PersonID == personId);
+            if (person == null || !person.IsActive)
+                return Unauthorized();
+
+            if (!string.IsNullOrWhiteSpace(person.PasswordHash))
+            {
+                if (string.IsNullOrWhiteSpace(request.CurrentPassword))
+                    return BadRequest(new { message = "Укажите текущий пароль" });
+
+                if (!_passwordService.VerifyPassword(person, request.CurrentPassword, person.PasswordHash))
+                    return BadRequest(new { message = "Неверный текущий пароль" });
+            }
+
+            person.PasswordHash = _passwordService.HashPassword(person, request.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Пароль изменён" });
         }
 
         [HttpPost("logout")]
@@ -132,5 +163,11 @@ namespace ProductionApi.Controllers
     {
         public string EmployeeNumber { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+    }
+
+    public class ChangePasswordRequest
+    {
+        public string CurrentPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 }

@@ -32,6 +32,7 @@
                 <div class="form-group">
                     <label for="login-password">Пароль</label>
                     <input type="password" id="login-password" required autocomplete="current-password">
+                    <small class="form-hint">Если пароль ещё не задан, введите желаемый — он будет сохранён при входе</small>
                 </div>
                 <p id="login-error" class="login-error"></p>
                 <button type="submit" class="btn btn-primary login-submit">
@@ -52,7 +53,10 @@
                 <h1>Planner</h1>
             </div>
             <div class="user-info">
-                <span id="current-user-info" class="current-user-info"></span>
+                <button type="button" id="profile-btn" class="profile-btn" style="display:none;" title="Профиль">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="current-user-info" class="current-user-info"></span>
+                </button>
                 <button class="btn btn-sm btn-secondary" id="logout-btn" style="display:none;">
                     <i class="fas fa-sign-out-alt"></i> Выйти
                 </button>
@@ -902,6 +906,13 @@
                         <button class="btn btn-success" id="save-monthly-plan">
                             <i class="fas fa-save"></i> Сохранить план
                         </button>
+                        <button class="btn btn-info" id="import-monthly-plan-excel">
+                            <i class="fas fa-file-import"></i> Импорт Excel
+                        </button>
+                        <button class="btn btn-outline-success" id="export-monthly-plan-excel">
+                            <i class="fas fa-file-excel"></i> Экспорт Excel
+                        </button>
+                        <input type="file" id="import-monthly-plan-file" accept=".xlsx,.xls" style="display:none;">
                     </div>
                     <p class="hint-text">Деталь должна быть готова за день до отгрузки (ко 2-й смене предыдущего дня). План формируется с ближайшей смены до конца месяца — пока не выполнен объём отгрузок или не закончился материал.</p>
                     <div class="form-group" style="max-width: 500px;">
@@ -939,6 +950,9 @@
                         </button>
                         <button class="btn btn-warning" id="cancel-generated-plan">
                             <i class="fas fa-undo"></i> Отменить подтверждение
+                        </button>
+                        <button class="btn btn-outline-success" id="export-generated-plan-excel">
+                            <i class="fas fa-file-excel"></i> Экспорт Excel
                         </button>
                     </div>
                     <p class="hint-text">Подтверждение оприходует детали на склад и списывает материалы по нормам расхода.</p>

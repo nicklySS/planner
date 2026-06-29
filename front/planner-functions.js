@@ -17,6 +17,10 @@ function initPlanner() {
     $('#clear-generated-plan').off('click').on('click', clearGeneratedPlan);
     $('#confirm-generated-plan').off('click').on('click', confirmGeneratedPlan);
     $('#cancel-generated-plan').off('click').on('click', cancelGeneratedPlan);
+    $('#import-monthly-plan-excel').off('click').on('click', () => $('#import-monthly-plan-file').trigger('click'));
+    $('#import-monthly-plan-file').off('change').on('change', importMonthlyPlanFromExcel);
+    $('#export-monthly-plan-excel').off('click').on('click', exportMonthlyPlanToExcel);
+    $('#export-generated-plan-excel').off('click').on('click', exportGeneratedPlanToExcel);
 
     $('.planner-tab-btn').off('click').on('click', function() {
         switchPlannerTab($(this).data('planner-tab'));
@@ -44,6 +48,13 @@ function getPlannerYearMonth() {
     if (!val) return null;
     const [year, month] = val.split('-');
     return { year: parseInt(year), month: parseInt(month) };
+}
+
+function formatDetailDisplayName(detail) {
+    if (!detail) return '';
+    const detailName = detail.detailName || detail.DetailName || '';
+    const detailCode = detail.detailCode || detail.DetailCode || '';
+    return detailName ? (detailCode ? `${detailName} (${detailCode})` : detailName) : detail.detailID || '';
 }
 
 function loadPlannerData() {
@@ -114,7 +125,7 @@ function bindMonthlyPlanRowEvents(details) {
 
 function buildPlanItemRow(item, details, index) {
     const detailOptions = details.map(d =>
-        `<option value="${d.detailID}" ${d.detailID === item.detailID ? 'selected' : ''}>${d.detailName}</option>`
+        `<option value="${d.detailID}" ${d.detailID === item.detailID ? 'selected' : ''}>${formatDetailDisplayName(d)}</option>`
     ).join('');
 
     return `
@@ -186,6 +197,67 @@ function saveMonthlyPlan() {
     }).fail(function(xhr) {
         showNotification(xhr.responseJSON?.message || 'Ошибка сохранения плана', 'error');
     });
+}
+
+function importMonthlyPlanFromExcel(event) {
+    const file = event.target.files?.[0];
+    const ym = getPlannerYearMonth();
+    if (!file || !ym) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    $.ajax({
+        url: `${API_BASE_URL}/monthlyproductionplan/import/${ym.year}/${ym.month}`,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        xhrFields: { withCredentials: true }
+    }).done(function(res) {
+        showNotification(`Импортирован план из Excel: ${res.importedRows} строк`, 'success');
+        loadMonthlyPlan();
+    }).fail(function(xhr) {
+        showNotification(xhr.responseJSON?.message || 'Ошибка импорта Excel', 'error');
+    }).always(function() {
+        $(event.target).val('');
+    });
+}
+
+function exportMonthlyPlanToExcel() {
+    const ym = getPlannerYearMonth();
+    if (!ym) return;
+
+    downloadPlannerExcel(`${API_BASE_URL}/monthlyproductionplan/export/${ym.year}/${ym.month}`, `plan-otgruzok-${ym.year}-${String(ym.month).padStart(2, '0')}.xlsx`);
+}
+
+function exportGeneratedPlanToExcel() {
+    const ym = getPlannerYearMonth();
+    if (!ym) return;
+
+    downloadPlannerExcel(`${API_BASE_URL}/productionplanner/export-shift-plan/${ym.year}/${ym.month}`, `plan-smen-${ym.year}-${String(ym.month).padStart(2, '0')}.xlsx`);
+}
+
+function downloadPlannerExcel(url, filename) {
+    fetch(url, { credentials: 'include' })
+        .then(async response => {
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || 'Ошибка скачивания Excel');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(objectUrl);
+        })
+        .catch(err => {
+            showNotification(err.message || 'Ошибка скачивания Excel', 'error');
+        });
 }
 
 function generateProductionPlan() {
@@ -341,13 +413,14 @@ function loadGeneratedPlan() {
             }
 
             const overdueBadge = item.isOverdue ? '<span class="badge badge-danger">Просрочка</span> ' : '';
+            const detailLabel = item.detailFullName || formatDetailDisplayName(item) || item.detailID;
 
             tbody.append(`
                 <tr class="${item.isOverdue ? 'overdue-row' : ''}">
                     <td>${item.workDate}</td>
                     <td>${item.shiftCode}</td>
                     <td>${item.equipmentName || item.equipmentID}</td>
-                    <td>${overdueBadge}${item.detailName || item.detailID}</td>
+                    <td>${overdueBadge}${detailLabel}</td>
                     <td><strong>${item.plannedQuantity}</strong></td>
                     <td>${item.isOverdue ? 'Да' : 'Нет'}</td>
                     <td>${item.notes || '-'}</td>
@@ -388,7 +461,7 @@ function loadPlannerSummary() {
         }
 
         const stocksHtml = (summary.detailStocks || []).map(s =>
-            `<li>${s.detailName}: <strong>${s.currentQuantity}</strong> шт.</li>`
+            `<li>${s.detailFullName || s.detailName || s.detailCode || 'Деталь #' + s.detailID}: <strong>${s.currentQuantity}</strong> шт.</li>`
         ).join('') || '<li>Нет остатков</li>';
         $('#summary-detail-stocks').html(stocksHtml);
 
@@ -439,7 +512,7 @@ function loadMaterialAnalysis() {
             data.byDetail.forEach(d => {
                 detBody.append(`
                     <tr>
-                        <td>${d.detailName}</td>
+                        <td>${d.detailFullName || d.detailName || d.detailCode || 'Деталь #' + d.detailID}</td>
                         <td>${d.demandQuantity}</td>
                         <td>${d.onStock}</td>
                         <td><strong>${d.netNeededForShipment}</strong></td>

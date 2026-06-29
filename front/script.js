@@ -79,6 +79,10 @@ function setupAuthHandlers() {
         currentUser = null;
         showLoginOverlay();
     });
+
+    $('#profile-btn').click(function() {
+        showProfileModal();
+    });
 }
 
 async function performLogin(employeeNumber, password) {
@@ -95,6 +99,9 @@ async function performLogin(employeeNumber, password) {
     }
 
     currentUser = await response.json();
+    if (currentUser.isFirstLogin) {
+        showNotification('Пароль успешно установлен. Сохраните его в надёжном месте.', 'success');
+    }
     onLoginSuccess();
 }
 
@@ -111,7 +118,7 @@ async function initAuth() {
 
 function showLoginOverlay() {
     $('#login-overlay').removeClass('hidden');
-    $('#logout-btn').hide();
+    $('#logout-btn, #profile-btn').hide();
     $('#current-user-info').text('');
 }
 
@@ -123,7 +130,94 @@ function updateUserHeader() {
     if (!currentUser) return;
     const roles = currentUser.roles?.join(', ') || '';
     $('#current-user-info').text(`${currentUser.fullName || currentUser.employeeNumber} (${roles})`);
-    $('#logout-btn').show();
+    $('#logout-btn, #profile-btn').show();
+}
+
+function showProfileModal() {
+    if (!currentUser) return;
+
+    const roles = currentUser.roles?.join(', ') || '—';
+    const content = `
+        <div class="profile-modal">
+            <div class="profile-info">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-field">
+                        <span class="profile-label">ФИО</span>
+                        <span class="profile-value">${escapeHtml(currentUser.fullName || '—')}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-label">Табельный номер</span>
+                        <span class="profile-value">${escapeHtml(currentUser.employeeNumber || '—')}</span>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-label">Роли</span>
+                        <span class="profile-value">${escapeHtml(roles)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="profile-divider">
+
+            <h4 class="profile-section-title">Смена пароля</h4>
+            <form id="change-password-form">
+                <div class="form-group">
+                    <label for="profile-current-password">Текущий пароль</label>
+                    <input type="password" id="profile-current-password" class="form-control" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label for="profile-new-password">Новый пароль</label>
+                    <input type="password" id="profile-new-password" class="form-control" required autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="profile-confirm-password">Подтверждение пароля</label>
+                    <input type="password" id="profile-confirm-password" class="form-control" required autocomplete="new-password">
+                </div>
+                <p id="profile-password-error" class="login-error"></p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Сменить пароль</button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    showModal('Мой профиль', content);
+
+    $('#change-password-form').on('submit', async function(e) {
+        e.preventDefault();
+        $('#profile-password-error').text('');
+
+        const currentPassword = $('#profile-current-password').val();
+        const newPassword = $('#profile-new-password').val();
+        const confirmPassword = $('#profile-confirm-password').val();
+
+        if (newPassword !== confirmPassword) {
+            $('#profile-password-error').text('Новый пароль и подтверждение не совпадают');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.message || 'Не удалось сменить пароль');
+            }
+
+            showNotification('Пароль успешно изменён', 'success');
+            closeModal();
+        } catch (error) {
+            $('#profile-password-error').text(error.message || 'Не удалось сменить пароль');
+        }
+    });
 }
 
 function applyPermissions() {
@@ -1146,7 +1240,8 @@ async function apiRequest(method, endpoint, data = null) {
         }
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || `HTTP error! status: ${response.status}`);
         }
         
         // Проверяем, есть ли тело ответа
@@ -3113,7 +3208,7 @@ function showPersonModal(person = null) {
         
         const personData = {
             personID: personId,
-            employeeNumber: $('#employee-number').val(),
+            employeeNumber: $('#employee-number').val().trim(),
             fullName: $('#full-name').val(),
             workPlaceID: workplaceId ? parseInt(workplaceId) : null,
             isActive: $('#is-active').is(':checked')

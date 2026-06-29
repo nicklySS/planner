@@ -301,7 +301,7 @@ namespace ProductionApi.Services
                 DetailID = i.DetailID,
                 Quantity = i.Quantity,
                 ShipmentDate = i.ShipmentDate.Date,
-                DeadlineDate = i.ShipmentDate.Date.AddDays(-1),
+                DeadlineDate = i.ShipmentDate.Date,
                 DeadlineShift = "2я"
             }).ToList();
         }
@@ -337,7 +337,7 @@ namespace ProductionApi.Services
                 var deadlineOrder = ShiftOrder.ToList().IndexOf(demand.DeadlineShift);
                 var isPastDeadline =
                     workDate.Date > demand.DeadlineDate.Date ||
-                    (workDate.Date == demand.DeadlineDate.Date && currentOrder > deadlineOrder);
+                    (workDate.Date == demand.DeadlineDate.Date && currentOrder >= deadlineOrder);
 
                 if (isPastDeadline)
                     overdue.Add(demand.DetailID);

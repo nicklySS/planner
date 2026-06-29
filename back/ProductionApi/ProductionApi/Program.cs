@@ -76,6 +76,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSingleton<PasswordService>();
 builder.Services.AddScoped<ProductionPlanningService>();
 builder.Services.AddScoped<ProductionPlanExecutionService>();
+builder.Services.AddScoped<PlannerExcelService>();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:5500" };

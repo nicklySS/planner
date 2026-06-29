@@ -13,15 +13,18 @@ namespace ProductionApi.Controllers
         private readonly ProductionDbContext _context;
         private readonly ProductionPlanningService _planningService;
         private readonly ProductionPlanExecutionService _executionService;
+        private readonly PlannerExcelService _excelService;
 
         public ProductionPlannerController(
             ProductionDbContext context,
             ProductionPlanningService planningService,
-            ProductionPlanExecutionService executionService)
+            ProductionPlanExecutionService executionService,
+            PlannerExcelService excelService)
         {
             _context = context;
             _planningService = planningService;
             _executionService = executionService;
+            _excelService = excelService;
         }
 
         [HttpGet("generated/{year}/{month}")]
@@ -62,6 +65,11 @@ namespace ProductionApi.Controllers
                         EquipmentName = i.Equipment?.EquipmentName,
                         i.DetailID,
                         DetailName = i.Detail?.DetailName,
+                        DetailFullName = i.Detail != null
+                            ? (string.IsNullOrWhiteSpace(i.Detail.DetailCode)
+                                ? i.Detail.DetailName
+                                : $"{i.Detail.DetailName} ({i.Detail.DetailCode})")
+                            : null,
                         i.PlannedQuantity,
                         i.IsOverdue,
                         i.Notes
@@ -144,6 +152,14 @@ namespace ProductionApi.Controllers
             }
         }
 
+        [AdminWrite]
+        [HttpGet("export-shift-plan/{year}/{month}")]
+        public async Task<IActionResult> ExportShiftPlanToExcel(int year, int month)
+        {
+            var stream = await _excelService.ExportShiftPlanAsync(year, month, _context);
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"plan-smen-{year}-{month:D2}.xlsx");
+        }
+
         [HttpGet("materials/{year}/{month}")]
         public async Task<ActionResult> GetMaterialAnalysis(int year, int month)
         {
@@ -168,6 +184,7 @@ namespace ProductionApi.Controllers
                 {
                     d.DetailID,
                     d.DetailName,
+                    DetailFullName = d.DetailName,
                     d.DemandQuantity,
                     d.OnStock,
                     d.NetNeededForShipment,
@@ -221,6 +238,12 @@ namespace ProductionApi.Controllers
                 {
                     s.DetailID,
                     DetailName = s.Detail?.DetailName,
+                    DetailCode = s.Detail?.DetailCode,
+                    DetailFullName = s.Detail != null
+                        ? (string.IsNullOrWhiteSpace(s.Detail.DetailCode)
+                            ? s.Detail.DetailName
+                            : $"{s.Detail.DetailName} ({s.Detail.DetailCode})")
+                        : null,
                     s.CurrentQuantity
                 }),
                 materialStocks = materialStocks.GroupBy(s => s.MaterialID).Select(g => new

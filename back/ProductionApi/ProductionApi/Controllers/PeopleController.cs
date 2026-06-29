@@ -51,6 +51,7 @@ namespace ProductionApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Person>> CreatePerson(Person person)
         {
+            person.EmployeeNumber = person.EmployeeNumber?.Trim();
             _context.People.Add(person);
             await _context.SaveChangesAsync();
 
@@ -67,6 +68,15 @@ namespace ProductionApi.Controllers
                 return BadRequest();
             }
 
+            var existing = await _context.People.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.PersonID == id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            person.EmployeeNumber = person.EmployeeNumber?.Trim();
+            person.PasswordHash = existing.PasswordHash;
             _context.Entry(person).State = EntityState.Modified;
 
             try

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductionApi.Auth;
 using ProductionApi.Data;
 using ProductionApi.Models;
+using ProductionApi.Services;
 
 namespace ProductionApi.Controllers
 {
@@ -11,10 +12,12 @@ namespace ProductionApi.Controllers
     public class MonthlyProductionPlanController : ControllerBase
     {
         private readonly ProductionDbContext _context;
+        private readonly PlannerExcelService _excelService;
 
-        public MonthlyProductionPlanController(ProductionDbContext context)
+        public MonthlyProductionPlanController(ProductionDbContext context, PlannerExcelService excelService)
         {
             _context = context;
+            _excelService = excelService;
         }
 
         [HttpGet("{year}/{month}")]
@@ -41,6 +44,11 @@ namespace ProductionApi.Controllers
                     i.DetailID,
                     DetailName = i.Detail?.DetailName,
                     DetailCode = i.Detail?.DetailCode,
+                    DetailFullName = i.Detail != null
+                        ? (string.IsNullOrWhiteSpace(i.Detail.DetailCode)
+                            ? i.Detail.DetailName
+                            : $"{i.Detail.DetailName} ({i.Detail.DetailCode})")
+                        : null,
                     i.Quantity,
                     ShipmentDate = i.ShipmentDate.ToString("yyyy-MM-dd"),
                     i.Notes
@@ -90,6 +98,29 @@ namespace ProductionApi.Controllers
 
             await _context.SaveChangesAsync();
             return await GetPlan(year, month);
+        }
+
+        [AdminWrite]
+        [HttpPost("import/{year}/{month}")]
+        public async Task<ActionResult> ImportPlanFromExcel(int year, int month, IFormFile file)
+        {
+            try
+            {
+                var result = await _excelService.ImportShipmentPlanAsync(file, year, month, _context);
+                return Ok(new { message = "План отгрузок импортирован", importedRows = result.ImportedRows });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AdminWrite]
+        [HttpGet("export/{year}/{month}")]
+        public async Task<IActionResult> ExportPlanToExcel(int year, int month)
+        {
+            var stream = await _excelService.ExportShipmentPlanAsync(year, month, _context);
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"plan-otgruzok-{year}-{month:D2}.xlsx");
         }
 
         [AdminWrite]
